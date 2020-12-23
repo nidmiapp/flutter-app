@@ -1,0 +1,13 @@
+{
+  "baseUrlAuth"   : "https://192.168.2.44:2502",
+  "baseUrlAccInfo": "https://192.168.2.44:2503",
+  "baseUrlRequest": "https://192.168.2.44:2504",
+  "baseUrlReply"  : "https://192.168.2.44:2505",
+  "baseUrlChat"   : "https://192.168.2.44:2506",
+  "baseUrlPayment": "https://192.168.2.44:2507",
+  "baseUrlReview" : "https://192.168.2.44:2508",
+  "baseUrlUtil"   : "https://192.168.2.44:2555",
+  "api_key"    : "mYq3t6w9z$C&F)H@McQfTjWnZr4u7x!A%D*G-KaNdRgUkXp2s5v8y/B?E(H+MbQe",
+  "secret_key" : "n!dm!-@$$-s3cr3t",
+  "cipher_key" : "NidmiShah1970!@#$%^&*()_+"
+}

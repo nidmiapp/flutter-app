@@ -1,0 +1,10 @@
+{
+  "baseUrlAuth"   : "https://api.nidmi.net:2502",
+  "baseUrlAccInfo": "https://api.nidmi.net:2503",
+  "baseUrlRequest": "https://api.nidmi.net:2504",
+  "baseUrlReply"  : "https://api.nidmi.net:2505",
+  "baseUrlChat"   : "https://api.nidmi.net:2506",
+  "baseUrlPayment": "https://api.nidmi.net:2507",
+  "baseUrlReview" : "https://api.nidmi.net:2508",
+  "baseUrlUtil"   : "https://api.nidmi.net:2555"
+}
