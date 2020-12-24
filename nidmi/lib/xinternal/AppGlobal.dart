@@ -13,28 +13,32 @@ class AppGlobal {
 
   AppGlobal();
 
-  String ENVIRONMENT='';
+  static String ENVIRONMENT='';
 
-  static AppGlobal single_instance = null;
+  void setEnv(String env){
+    ENVIRONMENT = env;
+  }
+
+  static AppGlobal _single_instance= null as AppGlobal;
 
   static AppGlobal getInstance()
   {
-    if (single_instance == null)
-      single_instance = new AppGlobal();
-    return single_instance;
+    if (_single_instance == null)
+      _single_instance = new AppGlobal();
+    return _single_instance;
   }
 
-  static String baseUrlAuth;
-  static String baseUrlAccInfo;
-  static String baseUrlRequest;
-  static String baseUrlReply;
-  static String baseUrlChat;
-  static String baseUrlPayment;
-  static String baseUrlReview;
-  static String baseUrlUtil;
-  static String API_KEY;
-  static String SECRET_KEY;
-  static String CIPHER_KEY;
+  static String baseUrlAuth='';
+  static String baseUrlAccInfo='';
+  static String baseUrlRequest='';
+  static String baseUrlReply='';
+  static String baseUrlChat='';
+  static String baseUrlPayment='';
+  static String baseUrlReview='';
+  static String baseUrlUtil='';
+  static String API_KEY='';
+  static String SECRET_KEY='';
+  static String CIPHER_KEY='';
 
   static String sharedPreferenceUserExpiry = "USEREXPIRY";
   static String sharedPreferenceUserNameKey = "USERNAMEKEY";
@@ -42,19 +46,18 @@ class AppGlobal {
   static String sharedPreferenceAccessKey = "ACCESSKEY";
   static String sharedPreferenceRefreshKey = "REFRESHKEY";
 
-
-  configToAppGlobal(AppConfig cfg){
-    baseUrlAuth   = cfg.baseUrlAuth;
-    baseUrlAccInfo= cfg.baseUrlAccInfo;
-    baseUrlRequest= cfg.baseUrlRequest;
-    baseUrlReply  = cfg.baseUrlReply;
-    baseUrlChat   = cfg.baseUrlChat;
-    baseUrlPayment= cfg.baseUrlPayment;
-    baseUrlReview = cfg.baseUrlReview;
-    baseUrlUtil   = cfg.baseUrlUtil;
-    API_KEY = cfg.api_key;
-    SECRET_KEY = cfg.secret_key;
-    CIPHER_KEY = cfg.cipher_key;
+  configToAppGlobal(){
+    baseUrlAuth   = AppConfig.getInstance().baseUrlAuth;
+    baseUrlAccInfo= AppConfig.getInstance().baseUrlAccInfo;
+    baseUrlRequest= AppConfig.getInstance().baseUrlRequest;
+    baseUrlReply  = AppConfig.getInstance().baseUrlReply;
+    baseUrlChat   = AppConfig.getInstance().baseUrlChat;
+    baseUrlPayment= AppConfig.getInstance().baseUrlPayment;
+    baseUrlReview = AppConfig.getInstance().baseUrlReview;
+    baseUrlUtil   = AppConfig.getInstance().baseUrlUtil;
+    API_KEY = AppConfig.getInstance().api_key;
+    SECRET_KEY = AppConfig.getInstance().secret_key;
+    CIPHER_KEY = AppConfig.getInstance().cipher_key;
   }
 
   /// saving data to sharedpreference

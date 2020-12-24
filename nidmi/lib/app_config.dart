@@ -4,14 +4,25 @@ import 'package:logger/logger.dart';
 
 class AppConfig {
 
-  static AppConfig single_instance = null;
+  static AppConfig _single_instance = null as AppConfig;
 
-  static AppConfig getInstance()
-  {
-    if (single_instance == null)
-      single_instance = new AppConfig();
-
-    return single_instance;
+  static AppConfig getInstance() {
+    if (_single_instance == null) {
+      _single_instance = new AppConfig(
+        baseUrlAuth: '',
+        baseUrlAccInfo: '',
+        baseUrlRequest: '',
+        baseUrlReply: '',
+        baseUrlChat: '',
+        baseUrlPayment: '',
+        baseUrlReview: '',
+        baseUrlUtil: '',
+        api_key: '',
+        secret_key: '',
+        cipher_key: ''
+      );
+    }
+    return _single_instance;
   }
 
   final String baseUrlAuth;

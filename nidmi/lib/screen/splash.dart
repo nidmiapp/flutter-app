@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:nidmi/xinternal/AppGlobal.dart';
+
+import '../xinternal/AppGlobal.dart';
 
 class Splash extends StatelessWidget {
 
@@ -15,7 +15,7 @@ class Splash extends StatelessWidget {
     _splash();
   }
 
-  Future<bool> _splash() async{
+  Future<void> _splash() async {
 
     var getUserNameSharedPreference =  await AppGlobal.getUserNameSharedPreference();
     var getUserEmailSharedPreference = await AppGlobal.getUserEmailSharedPreference();
@@ -54,10 +54,15 @@ class Splash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [Image.asset("assets/images/SBS-animation_600x600.gif"),]
+      body:Container(
+        alignment: Alignment.center,
+        child:
+
+      Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [Image.asset("assets/images/NidmiLogoSign-217X300.png"),]
       ),
+    ),
     );
   }
 }
