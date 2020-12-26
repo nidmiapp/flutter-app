@@ -60,7 +60,7 @@ class Splash extends StatelessWidget {
 
       Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Image.asset("assets/images/NidmiLogoSign-217X300.png"),]
+          children: [Image.asset("assets/images/NidmiLogoSign-218X300-blend.png"),]
       ),
     ),
     );

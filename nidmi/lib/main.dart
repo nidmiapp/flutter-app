@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'screen/splash.dart';
+import 'screen/register.dart';
 import 'xinternal/AppGlobal.dart';
 import 'app_config.dart';
 
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Splash(),
+      home: TextFieldSignup()//Splash(),
     );
   }
 }
