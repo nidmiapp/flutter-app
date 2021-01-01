@@ -1,24 +1,28 @@
-// Copyright 2019 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
 
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
+import 'package:logger/logger.dart';
+import 'package:nidmi/entity/User.dart';
+
+import 'package:nidmi/screen/signin.dart';
+import 'package:nidmi/service/authSvc.dart';
+
+import 'confirm.dart';
 
 //import 'package:gallery/l10n/gallery_localizations.dart';
 
 
-class TextFieldSignup extends StatelessWidget {
-  const TextFieldSignup();
+class SignUp extends StatelessWidget {
+  const SignUp();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text("Signup"),
+        title: Text("Sign Up"),
       ),
       body: const TextFormFieldSignup(),
     );
@@ -32,16 +36,15 @@ class TextFormFieldSignup extends StatefulWidget {
   TextFormFieldSignupState createState() => TextFormFieldSignupState();
 }
 
-class PersonData {
+class SignupData {
   String name = '';
-  //String phoneNumber = '';
   String email = '';
   String password = '';
 }
 
 class PasswordField extends StatefulWidget {
   const PasswordField({
-    this.fieldKey,
+    this.fieldKeySignUp,
     this.hintText,
     this.labelText,
     this.helperText,
@@ -50,7 +53,7 @@ class PasswordField extends StatefulWidget {
     this.onFieldSubmitted,
   });
 
-  final Key fieldKey;
+  final Key fieldKeySignUp;
   final String hintText;
   final String labelText;
   final String helperText;
@@ -68,7 +71,7 @@ class _PasswordFieldState extends State<PasswordField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      key: widget.fieldKey,
+      key: widget.fieldKeySignUp,
       obscureText: _obscureText,
       maxLength: 24,
       onSaved: widget.onSaved,
@@ -101,9 +104,9 @@ class _PasswordFieldState extends State<PasswordField> {
 }
 
 class TextFormFieldSignupState extends State<TextFormFieldSignup> {
-  PersonData person = PersonData();
+  SignupData person = SignupData();
 
-  void showInSnackBar(String value) {
+  void showInSnackBarSignUp(String value) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(value),
@@ -112,25 +115,27 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
 
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeySignUp = GlobalKey<FormState>();
   final GlobalKey<FormFieldState<String>> _passwordFieldKey =
   GlobalKey<FormFieldState<String>>();
   // final _UsNumberTextInputFormatter _phoneNumberFormatter =
   // _UsNumberTextInputFormatter();
 
-  void _handleSubmitted() {
-    final form = _formKey.currentState;
-    if (!form.validate()) {
+  void _handleSubmittedSignUp() {
+    final formUp = _formKeySignUp.currentState;
+    if (!formUp.validate()) {
       _autoValidateMode =
           AutovalidateMode.always; // Start validating on every change.
-      showInSnackBar(
+      showInSnackBarSignUp(
         "One or more fields is not valid!",
       );
     } else {
-      form.save();
-      showInSnackBar(
-          person.name+'  '+person.email+'  '+person.password
-      );
+      formUp.save();
+      _SignUp();
+      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Confirm()));
+      // showInSnackBarSignUp(
+      //     person.name+'  '+person.email+'  '+person.password
+      //);
     }
   }
 
@@ -156,15 +161,6 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
     return null;
   }
 
-  //
-  // String _validatePhoneNumber(String value) {
-  //   final phoneExp = RegExp(r'^\(\d\d\d\) \d\d\d\-\d\d\d\d$');
-  //   if (!phoneExp.hasMatch(value)) {
-  //     return "GalleryLocalizations.of(context).demoTextFieldEnterUSPhoneNumber";
-  //   }
-  //   return null;
-  // }
-
   String _validatePassword(String value) {
     final passwordField = _passwordFieldKey.currentState;
     if (passwordField.value == null || passwordField.value.isEmpty) {
@@ -176,7 +172,85 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
     if (passwordField.value.length < 6) {
       return "Password is too short at least(6 character)!";
     }
+    person.password = value;
     return null;
+  }
+
+  AuthService authService = new AuthService();
+
+  var logger = Logger(
+    printer: PrettyPrinter(),
+  );
+
+  bool isLoading = false;
+
+  _SignUp() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    logger.i('  email:===>>>'+person.name +'  email:===>>>'+person.email +'  pass:===>>>'+ person.password);
+    await authService.register(person.name, person.email, person.password)
+        .then((result) async {
+      if (result != null)  {
+        setState(() {
+          isLoading = false;
+          //show snackbar
+        });
+
+        logger.i(
+            '\n  response:=>>>'+result.response+
+                '\n  code:=====>>>'+result.code+
+                // '\n  email:====>>>'+result.email+
+                '\n  status:===>>>'+result.status
+            // +
+                // '\n  name:=>>>'+result.name+
+                // '\n  hash:>>>'+result.hash+
+                // '\n  verify_code:=>>>'+result.verify_code+
+                // '\n  created_ts:===>>>'+result.created_ts.toString()+
+                // '\n  user_id:===>>>'+result.user_id.toString()
+        );
+
+        // if(result.code.compareTo('200') == 0) {
+        //   AppGlobal().saveUserAccessSharedPreference(result.access_token);
+        //   AppGlobal().saveUserRefreshSharedPreference(result.refresh_token);
+        //   AppGlobal().saveUserNameSharedPreference(result.display_name);
+        //   AppGlobal().saveUserEmailSharedPreference(result.email);
+        //   AppGlobal().saveUserExpiredSharedPreference(result.expires_at.toString());
+        //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Confirm()));
+        // } else {
+        //   logger.i('  LoginResponse:=>>>'+result.response +
+        //       '\n  code:==========>>>'+ result.code +
+        //       '\n  status:========>>>'+ result.status);
+        //   AppGlobal().saveUserAccessSharedPreference('');
+        //   AppGlobal().saveUserRefreshSharedPreference('');
+        //   AppGlobal().saveUserNameSharedPreference('');
+        //   AppGlobal().saveUserEmailSharedPreference('');
+        //   AppGlobal().saveUserExpiredSharedPreference('');
+        //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash()));
+        //   // var sheetController = showModalBottomSheet(
+        //   //     context: context,
+        //   //     builder: (context) => BottomSheetWidget());
+        //   // sheetController.then((value) {});
+        // }
+        //
+        // logger.i(
+        //     '\n  getUserNameSharedPreference:====>>>'+ await AppGlobal().getUserNameSharedPreference()+
+        //         '\n  getUserEmailSharedPreference:===>>>'+ await AppGlobal().getUserEmailSharedPreference()+
+        //         '\n  getUserAccessSharedPreference:==>>>'+ await AppGlobal().getUserAccessSharedPreference()+
+        //         '\n  getUserRefreshSharedPreference:=>>>'+ await AppGlobal().getUserRefreshSharedPreference()+
+        //         '\n  getUserExpiredSharedPreference:=>>>'+ await AppGlobal().getUserExpiredSharedPreference()+
+        //         '\n  isUserExpiredSharedPreference:==>>>'+ await AppGlobal().isUserExpiredSharedPreference().toString()
+        // );
+
+      } else {
+        setState(() {
+          isLoading = true;
+          //show snackbar
+        });
+      }
+    });
+    //}
   }
 
   @override
@@ -184,87 +258,127 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
     const sizedBoxSpace = SizedBox(height: 10);
 
     return Scaffold(
-      body:
+      body: isLoading
+          ? Container(
+        child: Center(child: CircularProgressIndicator()),
+      )
+          :
       Form(
-        key: _formKey,
+        key: _formKeySignUp,
         autovalidateMode: _autoValidateMode,
         child: Scrollbar(
           child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
             padding: EdgeInsets.symmetric(horizontal: 16),
-          // decoration: BoxDecoration(
-          //     border: Border.all(color: Colors.green, width: 1.5),
-          //     borderRadius: BorderRadius.circular(8.0)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Image.asset("assets/images/large-group-people-background-vector-illustration.jpg",),
-              sizedBoxSpace,
-              TextFormField(
-                //textCapitalization: TextCapitalization.words,
-                decoration: InputDecoration(
-                  filled: true,
-                  // icon: const Icon(Icons.person),
-                  hintText: "Enter Username",
+            // decoration: BoxDecoration(
+            //     border: Border.all(color: Colors.green, width: 1.5),
+            //     borderRadius: BorderRadius.circular(8.0)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: <Widget>[
+                      Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
+                      Image.asset("assets/images/NidmiLogoSign2Circle100X100.png",),
+                      //Image.asset("assets/images/NidmiLogoSign-109X150-blend.png"),
+                    ]
+                ),
+                // Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
+                sizedBoxSpace,
+                TextFormField(
+                  //textCapitalization: TextCapitalization.words,
+                  decoration: InputDecoration(
+                    filled: true,
+                    // icon: const Icon(Icons.person),
+                    hintText: "Enter Username",
+                    labelText:
+                    "Username",
+                  ),
+                  onSaved: (value) {
+                    person.name = value;
+                  },
+                  validator: _validateName,
+                ),
+                sizedBoxSpace,
+                TextFormField(
+                  decoration: InputDecoration(
+                    filled: true,
+                    // icon: const Icon(Icons.email),
+                    hintText: "Enter valid email address",
+                    labelText: "Email",
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  onSaved: (value) {
+                    person.email = value;
+                  },
+                  validator: _validateEmail,
+                ),
+                sizedBoxSpace,
+                PasswordField(
+                  fieldKeySignUp: _passwordFieldKey,
+                  // helperText:
+                  // "Password",
                   labelText:
-                  "Username",
-                ),
-                onSaved: (value) {
-                  person.name = value;
-                },
-                validator: _validateName,
-              ),
-              sizedBoxSpace,
-              TextFormField(
-                decoration: InputDecoration(
-                  filled: true,
-                  // icon: const Icon(Icons.email),
-                  hintText: "Enter valid email address",
-                  labelText: "Email",
-                ),
-                keyboardType: TextInputType.emailAddress,
-                onSaved: (value) {
-                  person.email = value;
-                },
-                validator: _validateEmail,
-              ),
-              sizedBoxSpace,
-              PasswordField(
-                fieldKey: _passwordFieldKey,
-                // helperText:
-                // "Password",
-                labelText:
-                "Enter password",
-                onFieldSubmitted: (value) {
-                  setState(() {
+                  "Enter password",
+                  onFieldSubmitted: (value) {
+                    setState(() {
+                    });
+                  },
+                  onSaved: (value) {
                     person.password = value;
-                  });
-                },
-              ),
-              sizedBoxSpace,
-              TextFormField(
-                decoration: InputDecoration(
-                  filled: true,
-                  labelText: "Re-Enter Password",
+                    print('person.password:' + person.password);
+                  },
                 ),
-                maxLength: 24,
-                obscureText: true,
-                validator: _validatePassword,
-              ),
-              sizedBoxSpace,
-              Center(
-                child: ElevatedButton(
-                  child: Text(
-                      "  Register  "),
-                  onPressed: _handleSubmitted,
+                sizedBoxSpace,
+                TextFormField(
+                  decoration: InputDecoration(
+                    filled: true,
+                    labelText: "Re-Enter Password",
+                  ),
+                  maxLength: 24,
+                  obscureText: true,
+                  validator: _validatePassword,
                 ),
-              ),
-              sizedBoxSpace,
-              sizedBoxSpace,
-            ],
+                sizedBoxSpace,
+                Center(
+                  child: ElevatedButton(
+                    child: Text(
+                        "  Register  "),
+                    onPressed: _handleSubmittedSignUp,
+                  ),
+                ),
+                sizedBoxSpace,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Have an account? ",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 16),                    ),
+                    GestureDetector(
+                      onTap: () {
+                        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
+                      },
+                      child: Text(
+                        "Sign In",
+                        style: TextStyle(
+                            color: Colors.indigo[500],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+                sizedBoxSpace,
+                sizedBoxSpace,
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }

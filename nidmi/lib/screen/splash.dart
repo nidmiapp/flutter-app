@@ -45,12 +45,6 @@ class Splash extends StatelessWidget {
     });
   }
 
-
-  final AppGlobal appGlobal = AppGlobal.getInstance();
-
-//  logger.i('  name:===>>>' + + '  pass:===>>>'+ passwordEditingController.text);
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,49 +60,3 @@ class Splash extends StatelessWidget {
     );
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:logger/logger.dart';
-// import 'package:nidmi/xinternal/AppGlobal.dart';
-//
-// class Splash extends StatefulWidget {
-//   @override
-//   _SplashState createState() => _SplashState();
-// }
-//
-// class _SplashState extends State<Splash> {
-//
-//   var logger = Logger(
-//     printer: PrettyPrinter(),
-//   );
-//
-//   var loggerNoStack = Logger(
-//     printer: PrettyPrinter(methodCount: 0),
-//   );
-//
-//   _SplashState() {
-//     _splash();
-//   }
-//
-//   Future<bool> _splash() async{
-//     logger.i(
-//         '\n  getUserNameSharedPreference:====>>>'+ await AppGlobal.getUserNameSharedPreference()+
-//             '\n  getUserEmailSharedPreference:===>>>'+ await AppGlobal.getUserEmailSharedPreference()+
-//             '\n  getUserAccessSharedPreference:==>>>'+ await AppGlobal.getUserAccessSharedPreference()+
-//             '\n  getUserRefreshSharedPreference:=>>>'+ await AppGlobal.getUserRefreshSharedPreference()+
-//             '\n  getUserExpiredSharedPreference:=>>>'+ await AppGlobal.getUserExpiredSharedPreference()+
-//             '\n  isUserExpiredSharedPreference:==>>>'+ await AppGlobal.isUserExpiredSharedPreference().toString()
-//     );
-//   }
-//   final AppGlobal appGlobal = AppGlobal.getInstance();
-//
-// //  logger.i('  name:===>>>' + + '  pass:===>>>'+ passwordEditingController.text);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//
-//       body: Image.asset("assets/images/SBS-animation_600x600.gif"),
-//     );
-//   }
-// }

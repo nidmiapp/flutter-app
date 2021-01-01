@@ -1,44 +1,26 @@
+//import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 import '../app_config.dart';
+
 class AppGlobal {
 
   static var logger = Logger(
     printer: PrettyPrinter(),
   );
-  //
-  // var loggerNoStack = Logger(
-  //   printer: PrettyPrinter(methodCount: 0),
-  // );
 
-  AppGlobal();
-
-  static String ENVIRONMENT='';
-
-  void setEnv(String env){
-    ENVIRONMENT = env;
-  }
-
-  static AppGlobal _single_instance= null as AppGlobal;
-
-  static AppGlobal getInstance()
-  {
-    if (_single_instance == null)
-      _single_instance = new AppGlobal();
-    return _single_instance;
-  }
-
-  static String baseUrlAuth='';
-  static String baseUrlAccInfo='';
-  static String baseUrlRequest='';
-  static String baseUrlReply='';
-  static String baseUrlChat='';
-  static String baseUrlPayment='';
-  static String baseUrlReview='';
-  static String baseUrlUtil='';
-  static String API_KEY='';
-  static String SECRET_KEY='';
-  static String CIPHER_KEY='';
+  static String baseUrlAuth;
+  static String baseUrlAccInfo;
+  static String baseUrlRequest;
+  static String baseUrlReply;
+  static String baseUrlChat;
+  static String baseUrlPayment;
+  static String baseUrlReview;
+  static String baseUrlUtil;
+  static String api_key;
+  static String secret_key;
+  static String cipher_key;
 
   static String sharedPreferenceUserExpiry = "USEREXPIRY";
   static String sharedPreferenceUserNameKey = "USERNAMEKEY";
@@ -46,18 +28,66 @@ class AppGlobal {
   static String sharedPreferenceAccessKey = "ACCESSKEY";
   static String sharedPreferenceRefreshKey = "REFRESHKEY";
 
-  configToAppGlobal(){
-    baseUrlAuth   = AppConfig.getInstance().baseUrlAuth;
-    baseUrlAccInfo= AppConfig.getInstance().baseUrlAccInfo;
-    baseUrlRequest= AppConfig.getInstance().baseUrlRequest;
-    baseUrlReply  = AppConfig.getInstance().baseUrlReply;
-    baseUrlChat   = AppConfig.getInstance().baseUrlChat;
-    baseUrlPayment= AppConfig.getInstance().baseUrlPayment;
-    baseUrlReview = AppConfig.getInstance().baseUrlReview;
-    baseUrlUtil   = AppConfig.getInstance().baseUrlUtil;
-    API_KEY = AppConfig.getInstance().api_key;
-    SECRET_KEY = AppConfig.getInstance().secret_key;
-    CIPHER_KEY = AppConfig.getInstance().cipher_key;
+  static ThemeData appThemeData = new ThemeData();
+
+  static AppGlobal _single_instance;
+
+  AppConfig appConfig=AppConfig.single_instance;
+
+  AppGlobal._internal();
+
+  factory AppGlobal({
+    baseUrlAuth,
+    baseUrlAccInfo,
+    baseUrlRequest,
+    baseUrlReply,
+    baseUrlChat,
+    baseUrlPayment,
+    baseUrlReview,
+    baseUrlUtil,
+    api_key,
+    secret_key,
+    cipher_key
+  }) {
+    return _single_instance;
+  }
+  static AppGlobal get single_instance {
+    if(_single_instance==null)
+      _single_instance = new AppGlobal._internal();
+    return _single_instance;
+  }
+
+  Future<AppGlobal> configToAppGlobal() async {
+    await appConfig.forEnvironment();
+    baseUrlAuth   = AppConfig.baseUrlAuth;
+    baseUrlAccInfo= AppConfig.baseUrlAccInfo;
+    baseUrlRequest= AppConfig.baseUrlRequest;
+    baseUrlReply  = AppConfig.baseUrlReply;
+    baseUrlChat   = AppConfig.baseUrlChat;
+    baseUrlPayment= AppConfig.baseUrlPayment;
+    baseUrlReview = AppConfig.baseUrlReview;
+    baseUrlUtil   = AppConfig.baseUrlUtil;
+    api_key = AppConfig.api_key;
+    secret_key = AppConfig.secret_key;
+    cipher_key = AppConfig.cipher_key;
+
+    print(api_key);
+    print(secret_key);
+    print(secret_key);
+    print(AppGlobal().hashCode.toString());
+    return new AppGlobal(
+      baseUrlAuth: baseUrlAuth,
+      baseUrlAccInfo: baseUrlAccInfo,
+      baseUrlRequest: baseUrlRequest,
+      baseUrlReply: baseUrlReply,
+      baseUrlChat: baseUrlChat,
+      baseUrlPayment: baseUrlPayment,
+      baseUrlReview: baseUrlReview,
+      baseUrlUtil: baseUrlUtil,
+      api_key: api_key,
+      secret_key: secret_key,
+      cipher_key: cipher_key
+    );
   }
 
   /// saving data to sharedpreference
@@ -129,4 +159,28 @@ class AppGlobal {
     return await preferences.getString(sharedPreferenceRefreshKey);
   }
 
+  changeAppThemeColor(int option){
+    switch(option){
+      case 0:
+        appThemeData = new ThemeData(
+          brightness:Brightness.light,
+          primarySwatch: Colors.indigo,
+          primaryColor: const Color(0xFF212121),
+          accentColor: const Color(0xFF64ffda),
+          canvasColor: const Color(0xFF303030),
+          fontFamily: 'Roboto',
+        );
+        break;
+      case 1:
+        appThemeData = new ThemeData(
+          brightness:Brightness.dark,
+          primarySwatch: Colors.indigo,
+          primaryColor: const Color(0xFF212121),
+          accentColor: const Color(0xFF64ffda),
+          canvasColor: const Color(0xFF303030),
+          fontFamily: 'Roboto',
+        );
+        break;
+    }
+  }
 }
