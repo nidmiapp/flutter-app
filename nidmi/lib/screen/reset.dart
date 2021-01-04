@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
+import 'package:logger/logger.dart';
+import 'package:nidmi/entity/User.dart';
 
 import 'package:nidmi/screen/signin.dart';
+import 'package:nidmi/service/authSvc.dart';
+import 'package:nidmi/xinternal/AppGlobal.dart';
 
 class Reset extends StatelessWidget {
   const Reset();
@@ -125,7 +129,8 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
       );
     } else {
       formRe.save();
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      _Reset();
       // showInSnackBarReset(
       //     person.verify+'  '+person.email+'  '+person.password
       //);
@@ -133,18 +138,19 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
   }
 
   String _validateVerify(String value) {
-    final verifyField = _verifyFieldKey.currentState;
-    if (verifyField.value == null || verifyField.value.isEmpty) {
+//    final verifyField = _verifyFieldKey.currentState;
+    if (value == null || value.isEmpty) {
       return "Code is empty!";
     }
 
-    if (int.tryParse(verifyField.value)==null) {
+    if (int.tryParse(value)==null) {
       return "Not a valid! or Should be 6 digits!";
     }
 
-    if (verifyField.value.length != 6 ) {
+    if (value.length != 6 ) {
       return "Code Should be 6 digits!";
     }
+    user.verify_code = value;
     return null;
   }
 
@@ -156,29 +162,87 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
     if (!mailExp.hasMatch(value)) {
       return "Not a valid email!";
     }
+    user.email = value;
     return null;
   }
 
   String _validatePassword(String value) {
     final passwordField = _passwordFieldKey.currentState;
-    if (passwordField.value == null || passwordField.value.isEmpty) {
+    if (value == null || value.isEmpty) {
       return "Password is empty!";
     }
     if (passwordField.value != value) {
       return "Password is not match!";
     }
-    if (passwordField.value.length < 6) {
+    if (value.length < 6) {
       return "Password is too short at least(6 character)!";
     }
+    user.hash = value;
     return null;
   }
+
+
+  AuthService authService = new AuthService();
+
+  var logger = Logger(
+    printer: PrettyPrinter(),
+  );
+
+  bool isLoading = false;
+
+  AppGlobal appGlobal = new AppGlobal();
+
+  User user = AppGlobal().user;
+
+  _Reset() async {
+
+
+    setState(() {
+      isLoading = true;
+    });
+
+    logger.i('  verify_code:===>>>'+user.verify_code +'  email:===>>>'+user.email );
+    await authService.reset(user)
+        .then((result) async {
+      if (result != null)  {
+        setState(() {
+          isLoading = false;
+          //show snackbar
+        });
+        logger.i('  statusCode:====>>>' + result.statusCode +
+            '\n  statusMessage:=>>>' + result.statusMessage );
+        logger.i('  email:====>>>' + result.email +
+            '\n  hash:=>>>' + result.hash );
+
+        if(result.statusCode.startsWith('2')) { // 200, 201, ...
+          ScaffoldMessenger.of(context).removeCurrentSnackBar();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SignIn()));
+        }
+      } else {
+        setState(() {
+          isLoading = true;
+          //show snackbar
+        });
+      }
+    });
+    //}
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
     const sizedBoxSpace = SizedBox(height: 10);
 
     return Scaffold(
-      body:
+      body: isLoading
+          ? Container(
+        child: Center(child: CircularProgressIndicator()),
+      )
+          :
       Form(
         key: _formKeyReset,
         autovalidateMode: _autoValidateMode,

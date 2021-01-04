@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
 import 'package:nidmi/entity/User.dart';
+import 'package:nidmi/screen/reset.dart';
 import 'package:nidmi/screen/signin.dart';
 import 'package:nidmi/service/authSvc.dart';
 import 'package:nidmi/xinternal/AppGlobal.dart';
@@ -11,31 +12,31 @@ import 'package:nidmi/xinternal/AppGlobal.dart';
 //import 'package:gallery/l10n/gallery_localizations.dart';
 
 
-class Confirm extends StatelessWidget {
-  const Confirm();
+class Forgot extends StatelessWidget {
+  const Forgot();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text("Confirm"),
+        title: Text("Forgot"),
       ),
-      body: const TextFormFieldConfirm(),
+      body: const TextFormFieldForgot(),
     );
   }
 }
 
-class TextFormFieldConfirm extends StatefulWidget {
-  const TextFormFieldConfirm({Key key}) : super(key: key);
+class TextFormFieldForgot extends StatefulWidget {
+  const TextFormFieldForgot({Key key}) : super(key: key);
 
   @override
-  TextFormFieldConfirmState createState() => TextFormFieldConfirmState();
+  TextFormFieldForgotState createState() => TextFormFieldForgotState();
 }
 
-class ConfirmField extends StatefulWidget {
-  const ConfirmField({
-    this.fieldKeyConfirm,
+class ForgotField extends StatefulWidget {
+  const ForgotField({
+    this.fieldKeyForgot,
     this.hintText,
     this.labelText,
     this.helperText,
@@ -44,7 +45,7 @@ class ConfirmField extends StatefulWidget {
     this.onFieldSubmitted,
   });
 
-  final Key fieldKeyConfirm;
+  final Key fieldKeyForgot;
   final String hintText;
   final String labelText;
   final String helperText;
@@ -53,18 +54,18 @@ class ConfirmField extends StatefulWidget {
   final ValueChanged<String> onFieldSubmitted;
 
   @override
-  _ConfirmFieldState createState() => _ConfirmFieldState();
+  _ForgotFieldState createState() => _ForgotFieldState();
 }
 
-class _ConfirmFieldState extends State<ConfirmField> {
+class _ForgotFieldState extends State<ForgotField> {
 //  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      key: widget.fieldKeyConfirm,
+      key: widget.fieldKeyForgot,
 //      obscureText: _obscureText,
-      maxLength: 6,
+//      maxLength: 6,
       onSaved: widget.onSaved,
       validator: widget.validator,
       onFieldSubmitted: widget.onFieldSubmitted,
@@ -78,9 +79,9 @@ class _ConfirmFieldState extends State<ConfirmField> {
   }
 }
 
-class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
+class TextFormFieldForgotState extends State<TextFormFieldForgot> {
 
-  void showInSnackBarConfirm(String value) {
+  void showInSnackBarForgot(String value) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(value),
@@ -89,22 +90,22 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
 
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
-  final GlobalKey<FormState> _formKeyConfirm = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyForgot = GlobalKey<FormState>();
   final GlobalKey<FormFieldState<String>> _verifyFieldKey =
   GlobalKey<FormFieldState<String>>();
 
-  void _handleSubmittedConfirm() {
-    final formIn = _formKeyConfirm.currentState;
+  void _handleSubmittedForgot() {
+    final formIn = _formKeyForgot.currentState;
     if (!formIn.validate()) {
       _autoValidateMode =
           AutovalidateMode.always; // Start validating on every change.
-      showInSnackBarConfirm(
+      showInSnackBarForgot(
         "One or more fields is not valid!",
       );
     } else {
       formIn.save();
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      _Confirm();
+      _Forgot();
     }
   }
 
@@ -116,25 +117,9 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
     if (!mailExp.hasMatch(value)) {
       return "Not a valid email!";
     }
+    user.email = value;
     return null;
   }
-
-  String _validateVerify(String value) {
-    final verifyField = _verifyFieldKey.currentState;
-    if (verifyField.value == null || verifyField.value.isEmpty) {
-      return "Code is empty!";
-    }
-
-    if (int.tryParse(verifyField.value)==null) {
-      return "Not a valid! or Should be 6 digits!";
-    }
-
-    if (verifyField.value.length != 6 ) {
-      return "Code Should be 6 digits!";
-    }
-    return null;
-  }
-
 
   AuthService authService = new AuthService();
 
@@ -148,32 +133,52 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
 
   User user = AppGlobal().user;
 
-  _Confirm() async {
-
-
+  _Forgot() async {
     setState(() {
       isLoading = true;
     });
 
-    logger.i('  verify_code:===>>>'+user.verify_code +'  email:===>>>'+user.email );
-    await authService.confirm(user)
+    logger.i('  email:===>>>'+user.email );
+    await authService.forgot(user)
         .then((result) async {
       if (result != null)  {
-        setState(() {
-          isLoading = false;
-          //show snackbar
-        });
-        logger.i('  statusCode:====>>>' + result.statusCode +
-            '\n  statusMessage:=>>>' + result.statusMessage );
-
         if(result.statusCode.startsWith('2')) { // 200, 201, ...
-          ScaffoldMessenger.of(context).removeCurrentSnackBar();
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SignIn()));
-        } else {
-          showInSnackBarConfirm("Not valid!");
+          logger.i('  statusCode:====>>>' + result.statusCode +
+              '\n  statusMessage:=>>>' + result.statusMessage );
+          User user = new User();
+          user.name = result.name;
+          user.verify_code = result.verify_code;
+          user.email = result.email;
+//        user.user_id = result.user_id;
+//        user.confirmed = result.confirmed;
+          AppGlobal.single_instance.user = user;
+          await authService.sendForgot(user)
+              .then((sendRes) async {
+            if (sendRes != null) {
+              setState(() {
+                isLoading = false;
+                //show snackbar
+              });
+              logger.i('\n  sendRes:<<<=>>>' + sendRes.toString());
+              logger.i('sendRes  statusCode:====>>>' + sendRes.statusCode +
+                  '\nsendRes  statusMessage:=>>>' + sendRes.statusMessage);
+
+              if (sendRes.statusCode.startsWith('2')) { // 200, 201, ...
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Reset()));
+              } else {
+                showInSnackBarForgot("Sending verify code not succeeded!");
+              }
+            } else {
+              setState(() {
+                isLoading = true;
+                //show snackbar
+              });
+            }
+          });
         }
       } else {
         setState(() {
@@ -196,7 +201,7 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
       )
           :
       Form(
-        key: _formKeyConfirm,
+        key: _formKeyForgot,
         autovalidateMode: _autoValidateMode,
         child: Scrollbar(
           child: SingleChildScrollView(
@@ -220,7 +225,7 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      "Verification code has been sent to your email",
+                      "Confirm email for resetting password",
                       style: TextStyle(
                           color: Colors.deepOrange[500],
                           fontWeight: FontWeight.normal,
@@ -237,32 +242,18 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
                     labelText: "Email",
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  initialValue: AppGlobal().userEmail,
+                  initialValue: AppGlobal().userEmail ?? '',
                   onSaved: (value) {
                     user.email = value;
                   },
                   validator: _validateEmail,
                 ),
                 sizedBoxSpace,
-                ConfirmField(
-                  fieldKeyConfirm: _verifyFieldKey,
-                  // helperText:
-                  // "Verify",
-                  labelText:
-                  "Enter verify",
-                  onFieldSubmitted: (value) {
-                    setState(() {
-                      user.verify_code = value;
-                    });
-                  },
-                  validator: _validateVerify,
-                ),
-                sizedBoxSpace,
                 Center(
                   child: ElevatedButton(
                     child: Text(
-                        "  Confirm  "),
-                    onPressed: _handleSubmittedConfirm,
+                        "  Forgot  "),
+                    onPressed: _handleSubmittedForgot,
                   ),
                 ),
                 sizedBoxSpace,

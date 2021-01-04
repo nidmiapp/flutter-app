@@ -223,6 +223,8 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => Confirm()));
+              } else {
+                showInSnackBarSignUp("Not valid!");
               }
             } else {
               setState(() {

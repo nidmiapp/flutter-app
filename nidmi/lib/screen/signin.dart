@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
+import 'package:logger/logger.dart';
+import 'package:nidmi/entity/User.dart';
+import 'package:nidmi/screen/forgot.dart';
 import 'package:nidmi/screen/register.dart';
+import 'package:nidmi/screen/reset.dart';
+import 'package:nidmi/screen/splash.dart';
+import 'package:nidmi/service/authSvc.dart';
+import 'package:nidmi/xinternal/AppGlobal.dart';
 
 //import 'package:gallery/l10n/gallery_localizations.dart';
 
@@ -121,9 +128,8 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
       );
     } else {
       formIn.save();
-      showInSnackBarSignIn(
-          person.email+' '+person.password
-      );
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      _SignIn();
     }
   }
 
@@ -135,26 +141,109 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
     if (!mailExp.hasMatch(value)) {
       return "Not a valid email!";
     }
+    person.email = value;
     return null;
   }
 
   String _validatePassword(String value) {
-    final passwordField = _passwordFieldKey.currentState;
-    if (passwordField.value == null || passwordField.value.isEmpty) {
+ //   final passwordField = _passwordFieldKey.currentState;
+    if (value == null || value.isEmpty) {
       return "Password is empty!";
     }
-    if (passwordField.value.length < 6) {
+    if (value.length < 6) {
       return "Password is too short at least(6 character)!";
     }
+    person.password = value;
     return null;
   }
+
+
+  AuthService authService = new AuthService();
+
+  var logger = Logger(
+    printer: PrettyPrinter(),
+  );
+
+  bool isLoading = false;
+
+  _SignIn() async {
+
+    setState(() {
+      isLoading = true;
+    });
+
+    logger.i('  email:===>>>'+person.email +'  pass:===>>>'+ person.password);
+    await authService.login(person.email, person.password)
+        .then((result) async {
+      if (result != null)  {
+        setState(() {
+          isLoading = false;
+          //show snackbar
+        });
+
+        if(result.code.compareTo('200') == 0) {
+          logger.i(
+              '\n  response:=>>>'+result.response+
+                  '\n  code:=====>>>'+result.code+
+                  '\n  email:====>>>'+result.email+
+                  '\n  status:===>>>'+result.status+
+                  '\n  display_name:=>>>'+result.display_name+
+                  '\n  refresh_token:>>>'+result.refresh_token+
+                  '\n  access_token:=>>>'+result.access_token+
+                  '\n  expires_at:===>>>'+result.expires_at+
+                  '\n  user_id:===>>>'+result.user_id.toString()
+          );
+          AppGlobal.saveUserAccessSharedPreference(result.access_token);
+          AppGlobal.saveUserRefreshSharedPreference(result.refresh_token);
+          AppGlobal.saveUserNameSharedPreference(result.display_name);
+          AppGlobal.saveUserEmailSharedPreference(result.email);
+          AppGlobal.saveUserExpiredSharedPreference(result.expires_at.toString());
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash()));
+        } else {
+          showInSnackBarSignIn("Not valid!");
+          logger.i('  LoginResponse:=>>>'+result.response +
+              '\n  code:==========>>>'+ result.code +
+              '\n  status:========>>>'+ result.status);
+          AppGlobal.saveUserAccessSharedPreference('');
+          AppGlobal.saveUserRefreshSharedPreference('');
+          AppGlobal.saveUserNameSharedPreference('');
+          AppGlobal.saveUserEmailSharedPreference('');
+          AppGlobal.saveUserExpiredSharedPreference('');
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash()));
+        }
+
+        logger.i(
+            '\n  getUserNameSharedPreference:====>>>'+ await AppGlobal.getUserNameSharedPreference()+
+                '\n  getUserEmailSharedPreference:===>>>'+ await AppGlobal.getUserEmailSharedPreference()+
+                '\n  getUserAccessSharedPreference:==>>>'+ await AppGlobal.getUserAccessSharedPreference()+
+                '\n  getUserRefreshSharedPreference:=>>>'+ await AppGlobal.getUserRefreshSharedPreference()+
+                '\n  getUserExpiredSharedPreference:=>>>'+ await AppGlobal.getUserExpiredSharedPreference()+
+                '\n  isUserExpiredSharedPreference:==>>>'+ await AppGlobal.isUserExpiredSharedPreference().toString()
+        );
+
+      } else {
+        setState(() {
+          isLoading = true;
+          //show snackbar
+        });
+      }
+    });
+    //}
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
     const sizedBoxSpace = SizedBox(height: 10);
 
     return Scaffold(
-      body:
+      body: isLoading
+          ? Container(
+        child: Center(child: CircularProgressIndicator()),
+      )
+          :
       Form(
         key: _formKeySignIn,
         autovalidateMode: _autoValidateMode,
@@ -214,7 +303,8 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                     // ),
                     GestureDetector(
                       onTap: () {
-//                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Forgot()));
+                        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Forgot()));
                       },
                       child: Text(
                         "Forgot Password",

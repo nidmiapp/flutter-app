@@ -11,7 +11,7 @@ class AppGlobal {
     printer: PrettyPrinter(),
   );
 
-  static User _user;
+  static User _user = new User();
 
   User get user => _user;
 

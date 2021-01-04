@@ -32,6 +32,10 @@ class AuthService {
 
     String loginUrl = AppGlobal.baseUrlAuth + "/auth/login";
 
+    print('email '+ email);
+    print('hash '+ password);
+    print('loginUrl '+ loginUrl);
+
     LoginResponse lr;
 
     try {
@@ -110,7 +114,7 @@ class AuthService {
 
     String confirmUrl = AppGlobal.baseUrlAuth + "/accounts/confirm";
 
-    print('>>>>>> signupUrl:'+confirmUrl);
+    print('>>>>>> confirmUrl:'+confirmUrl);
 
     UserResponse usr = new UserResponse();
     try {
@@ -191,9 +195,49 @@ class AuthService {
     return userResponse;
 
   }
-  Future<UserResponse> sendReset(User user) async {
 
-    String sendUrl = AppGlobal.baseUrlAuth + "/accounts/reset-password";
+  Future<UserResponse> forgot(User user) async {
+
+    String forgotUrl = AppGlobal.baseUrlAuth + "/accounts/forgot-password";
+
+    print('>>>>>> forgotUrl:'+forgotUrl);
+
+    UserResponse usr = new UserResponse();
+    try {
+      var response = await _dio.post(
+          "$forgotUrl",
+          data: {
+            "email": user.email,
+          },
+          options: Options(
+              headers: {
+                "content-type": "application/json",
+                "x-api-key": AppGlobal.api_key
+              }
+          )
+      ).timeout(Duration(seconds: 30));
+      print(response.statusCode);
+      print(response.data);
+      var responseData = response.data;
+      usr = UserResponse.fromJson(responseData);
+      usr.statusCode = response.statusCode.toString();
+      usr.statusMessage = response.statusMessage;
+
+      print(usr.toString());
+    } on DioError catch (e) {
+      usr = new UserResponse();
+      usr.statusMessage = e.message;
+      usr.statusCode = e.error.toString();
+      print(e);
+      print(usr.statusMessage);
+      print(usr.statusCode);
+    }
+    return usr;
+  }
+
+  Future<UserResponse> sendForgot(User user) async {
+
+    String sendUrl = AppGlobal.baseUrlAuth + "/accounts/send-forgot";
 
     print('>>>>>> sendUrl:'+sendUrl);
     print('>>>>>> AppGlobal.api_key:'+AppGlobal.api_key);
@@ -235,6 +279,48 @@ class AuthService {
     }
     return userResponse;
 
+  }
+
+
+  Future<UserResponse> reset(User user) async {
+
+    String resetUrl = AppGlobal.baseUrlAuth + "/accounts/reset-password";
+
+    print('>>>>>> resetUrl:'+resetUrl);
+
+    UserResponse usr = new UserResponse();
+    try {
+      var response = await _dio.post(
+          "$resetUrl",
+          data: {
+            "email": user.email,
+            "hash": user.hash,
+            "verify_code": user.verify_code
+          },
+          options: Options(
+              headers: {
+                "content-type": "application/json",
+                "x-api-key": AppGlobal.api_key
+              }
+          )
+      ).timeout(Duration(seconds: 30));
+      print(response.statusCode);
+      print(response.data);
+      var responseData = response.data;
+      usr = UserResponse.fromJson(responseData);
+      usr.statusCode = response.statusCode.toString();
+      usr.statusMessage = response.statusMessage;
+
+      print(usr.toString());
+    } on DioError catch (e) {
+      usr = new UserResponse();
+      usr.statusMessage = e.message;
+      usr.statusCode = e.error.toString();
+      print(e);
+      print(usr.statusMessage);
+      print(usr.statusCode);
+    }
+    return usr;
   }
 
 }
