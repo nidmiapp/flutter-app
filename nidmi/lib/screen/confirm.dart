@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
+import 'package:logger/logger.dart';
+import 'package:nidmi/entity/User.dart';
 import 'package:nidmi/screen/signin.dart';
+import 'package:nidmi/service/authSvc.dart';
+import 'package:nidmi/xinternal/AppGlobal.dart';
 
 //import 'package:gallery/l10n/gallery_localizations.dart';
 
@@ -27,11 +31,6 @@ class TextFormFieldConfirm extends StatefulWidget {
 
   @override
   TextFormFieldConfirmState createState() => TextFormFieldConfirmState();
-}
-
-class ConfirmData {
-  String email = '';
-  String verify_code = '';
 }
 
 class ConfirmField extends StatefulWidget {
@@ -80,7 +79,6 @@ class _ConfirmFieldState extends State<ConfirmField> {
 }
 
 class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
-  ConfirmData person = ConfirmData();
 
   void showInSnackBarConfirm(String value) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -105,10 +103,8 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
       );
     } else {
       formIn.save();
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
-      showInSnackBarConfirm(
-          person.email+' '+person.verify_code
-      );
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      _Confirm();
     }
   }
 
@@ -137,6 +133,54 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
       return "Code Should be 6 digits!";
     }
     return null;
+  }
+
+
+  AuthService authService = new AuthService();
+
+  var logger = Logger(
+    printer: PrettyPrinter(),
+  );
+
+  bool isLoading = false;
+
+  AppGlobal appGlobal = new AppGlobal();
+
+  User user = AppGlobal().user;
+
+  _Confirm() async {
+
+
+    setState(() {
+      isLoading = true;
+    });
+
+    logger.i('  verify_code:===>>>'+user.verify_code +'  email:===>>>'+user.email );
+    await authService.confirm(user)
+        .then((result) async {
+      if (result != null)  {
+        setState(() {
+          isLoading = false;
+          //show snackbar
+        });
+        logger.i('  statusCode:====>>>' + result.statusCode +
+            '\n  statusMessage:=>>>' + result.statusMessage );
+
+        if(result.statusCode.startsWith('2')) { // 200, 201, ...
+          ScaffoldMessenger.of(context).removeCurrentSnackBar();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SignIn()));
+        }
+      } else {
+        setState(() {
+          isLoading = true;
+          //show snackbar
+        });
+      }
+    });
+    //}
   }
 
   @override
@@ -187,8 +231,9 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
                     labelText: "Email",
                   ),
                   keyboardType: TextInputType.emailAddress,
+                  initialValue: AppGlobal().userEmail,
                   onSaved: (value) {
-                    person.email = value;
+                    user.email = value;
                   },
                   validator: _validateEmail,
                 ),
@@ -201,7 +246,7 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
                   "Enter verify",
                   onFieldSubmitted: (value) {
                     setState(() {
-                      person.verify_code = value;
+                      user.verify_code = value;
                     });
                   },
                   validator: _validateVerify,

@@ -24,6 +24,10 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json){
+    if(json['created_ts']==null)
+      json['created_ts'] = (new DateTime(2000,1,1).toString());
+    if(json['updated_ts']==null)
+      json['updated_ts'] = (new DateTime(2000,1,1).toString());
     return new User(
         email : json['email'] ?? '',
         user_id : json['user_id'] ?? 0,
@@ -32,8 +36,8 @@ class User {
         verify_code : json['verify_code'] ?? '',
         roles : json['roles'] ?? '',
         confirmed : json['confirmed'] ?? false,
-        created_ts : json['created_ts'] ?? '',
-        updated_ts : json['updated_ts'] ?? ''
+      created_ts : DateTime.parse(json['created_ts'].toString()) ?? null,
+      updated_ts : DateTime.parse(json['updated_ts'].toString()) ?? null
     );
   }
 

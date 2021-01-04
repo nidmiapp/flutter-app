@@ -10,9 +10,8 @@ class UserResponse {
   bool confirmed;
   DateTime created_ts;
   DateTime updated_ts;
-  String response;
-  String status;
-  String code;
+  String statusMessage;
+  String statusCode;
 
   UserResponse({
     this.email,
@@ -24,12 +23,15 @@ class UserResponse {
     this.confirmed,
     this.created_ts,
     this.updated_ts,
-    this.response,
-    this.status,
-    this.code,
+    this.statusMessage,
+    this.statusCode
  });
 
   factory UserResponse.fromJson(Map<String, dynamic> json){
+    if(json['created_ts']==null)
+      json['created_ts'] = (new DateTime(2000,1,1).toString());
+    if(json['updated_ts']==null)
+      json['updated_ts'] = (new DateTime(2000,1,1).toString());
     return new UserResponse(
         email : json['email'] ?? '',
         user_id : json['user_id'] ?? 0,
@@ -38,11 +40,10 @@ class UserResponse {
         verify_code : json['verify_code'] ?? '',
         roles : json['roles'] ?? '',
         confirmed : json['confirmed'] ?? false,
-        created_ts : json['created_ts'] ?? '',
-        updated_ts : json['updated_ts'] ?? '',
-        response : json['response'] ?? '',
-        status : json['status'] ?? '',
-        code : json['code'] ?? ''
+        created_ts : DateTime.parse(json['created_ts'].toString()) ?? null,
+        updated_ts : DateTime.parse(json['updated_ts'].toString()) ?? null,
+        statusMessage : json['statusmessage'] ?? '',
+        statusCode : json['statuscode'] ?? ''
     );
   }
 

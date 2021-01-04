@@ -1,5 +1,6 @@
 //import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:nidmi/entity/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 import '../app_config.dart';
@@ -9,6 +10,22 @@ class AppGlobal {
   static var logger = Logger(
     printer: PrettyPrinter(),
   );
+
+  static User _user;
+
+  User get user => _user;
+
+  set user(User value) {
+    _user = value;
+  }
+
+  static String _userEmail;
+
+  String get userEmail => _userEmail;
+
+  set userEmail(String value) {
+    _userEmail = value;
+  }
 
   static String baseUrlAuth;
   static String baseUrlAccInfo;

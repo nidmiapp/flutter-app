@@ -6,8 +6,9 @@ import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
 import 'package:nidmi/entity/User.dart';
 
-import 'package:nidmi/screen/signin.dart';
-import 'package:nidmi/service/authSvc.dart';
+import '../screen/signin.dart';
+import '../service/authSvc.dart';
+import '../xinternal/AppGlobal.dart';
 
 import 'confirm.dart';
 
@@ -132,10 +133,6 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
     } else {
       formUp.save();
       _SignUp();
-      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Confirm()));
-      // showInSnackBarSignUp(
-      //     person.name+'  '+person.email+'  '+person.password
-      //);
     }
   }
 
@@ -185,6 +182,11 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
   bool isLoading = false;
 
   _SignUp() async {
+
+    AppGlobal appGlobal = AppGlobal.single_instance;
+
+    appGlobal.userEmail = person.email;
+
     setState(() {
       isLoading = true;
     });
@@ -193,56 +195,43 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
     await authService.register(person.name, person.email, person.password)
         .then((result) async {
       if (result != null)  {
-        setState(() {
-          isLoading = false;
-          //show snackbar
-        });
+        logger.i('  statusCode:====>>>' + result.statusCode +
+            '\n  statusMessage:=>>>' + result.statusMessage );
 
-        logger.i(
-            '\n  response:=>>>'+result.response+
-                '\n  code:=====>>>'+result.code+
-                // '\n  email:====>>>'+result.email+
-                '\n  status:===>>>'+result.status
-            // +
-                // '\n  name:=>>>'+result.name+
-                // '\n  hash:>>>'+result.hash+
-                // '\n  verify_code:=>>>'+result.verify_code+
-                // '\n  created_ts:===>>>'+result.created_ts.toString()+
-                // '\n  user_id:===>>>'+result.user_id.toString()
-        );
+        User user = new User();
+        user.name = result.name;
+        user.verify_code = result.verify_code;
+        user.email = result.email;
+//        user.user_id = result.user_id;
+//        user.confirmed = result.confirmed;
+        AppGlobal.single_instance.user = user;
+        if(result.statusCode.startsWith('2')) { // 200, 201, ...
+          await authService.sendRegister(user)
+              .then((sendRes) async {
+            if (sendRes != null) {
+              setState(() {
+                isLoading = false;
+                //show snackbar
+              });
+              logger.i('\n  sendRes:<<<=>>>' + sendRes.toString());
+              logger.i('sendRes  statusCode:====>>>' + sendRes.statusCode +
+                  '\nsendRes  statusMessage:=>>>' + sendRes.statusMessage);
 
-        // if(result.code.compareTo('200') == 0) {
-        //   AppGlobal().saveUserAccessSharedPreference(result.access_token);
-        //   AppGlobal().saveUserRefreshSharedPreference(result.refresh_token);
-        //   AppGlobal().saveUserNameSharedPreference(result.display_name);
-        //   AppGlobal().saveUserEmailSharedPreference(result.email);
-        //   AppGlobal().saveUserExpiredSharedPreference(result.expires_at.toString());
-        //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Confirm()));
-        // } else {
-        //   logger.i('  LoginResponse:=>>>'+result.response +
-        //       '\n  code:==========>>>'+ result.code +
-        //       '\n  status:========>>>'+ result.status);
-        //   AppGlobal().saveUserAccessSharedPreference('');
-        //   AppGlobal().saveUserRefreshSharedPreference('');
-        //   AppGlobal().saveUserNameSharedPreference('');
-        //   AppGlobal().saveUserEmailSharedPreference('');
-        //   AppGlobal().saveUserExpiredSharedPreference('');
-        //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash()));
-        //   // var sheetController = showModalBottomSheet(
-        //   //     context: context,
-        //   //     builder: (context) => BottomSheetWidget());
-        //   // sheetController.then((value) {});
-        // }
-        //
-        // logger.i(
-        //     '\n  getUserNameSharedPreference:====>>>'+ await AppGlobal().getUserNameSharedPreference()+
-        //         '\n  getUserEmailSharedPreference:===>>>'+ await AppGlobal().getUserEmailSharedPreference()+
-        //         '\n  getUserAccessSharedPreference:==>>>'+ await AppGlobal().getUserAccessSharedPreference()+
-        //         '\n  getUserRefreshSharedPreference:=>>>'+ await AppGlobal().getUserRefreshSharedPreference()+
-        //         '\n  getUserExpiredSharedPreference:=>>>'+ await AppGlobal().getUserExpiredSharedPreference()+
-        //         '\n  isUserExpiredSharedPreference:==>>>'+ await AppGlobal().isUserExpiredSharedPreference().toString()
-        // );
-
+              if (sendRes.statusCode.startsWith('2')) { // 200, 201, ...
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Confirm()));
+              }
+            } else {
+              setState(() {
+                isLoading = true;
+                //show snackbar
+              });
+            }
+          });
+        }
       } else {
         setState(() {
           isLoading = true;
@@ -383,42 +372,3 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
     );
   }
 }
-/*
-/// Format incoming numeric text to fit the format of (###) ###-#### ##
-class _UsNumberTextInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
-    final newTextLength = newValue.text.length;
-    final newText = StringBuffer();
-    var selectionIndex = newValue.selection.end;
-    var usedSubstringIndex = 0;
-    if (newTextLength >= 1) {
-      newText.write('(');
-      if (newValue.selection.end >= 1) selectionIndex++;
-    }
-    if (newTextLength >= 4) {
-      newText.write(newValue.text.substring(0, usedSubstringIndex = 3) + ') ');
-      if (newValue.selection.end >= 3) selectionIndex += 2;
-    }
-    if (newTextLength >= 7) {
-      newText.write(newValue.text.substring(3, usedSubstringIndex = 6) + '-');
-      if (newValue.selection.end >= 6) selectionIndex++;
-    }
-    if (newTextLength >= 11) {
-      newText.write(newValue.text.substring(6, usedSubstringIndex = 10) + ' ');
-      if (newValue.selection.end >= 10) selectionIndex++;
-    }
-    // Dump the rest.
-    if (newTextLength >= usedSubstringIndex) {
-      newText.write(newValue.text.substring(usedSubstringIndex));
-    }
-    return TextEditingValue(
-      text: newText.toString(),
-      selection: TextSelection.collapsed(offset: selectionIndex),
-    );
-  }
-}
-*/
