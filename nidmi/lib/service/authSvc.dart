@@ -1,22 +1,16 @@
-
 import 'dart:io';
-
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import 'package:nidmi/entity/User.dart';
+import '../entity/User.dart';
 import '../xinternal/UserResponse.dart';
 import '../xinternal/AppGlobal.dart';
 import '../xinternal/LoginResponse.dart';
 
 class AuthService {
 
-  var logger = Logger(
-    printer: PrettyPrinter(),
-  );
-
+  var logger = Logger(printer: PrettyPrinter(),);
   AppGlobal appGlobal = AppGlobal.single_instance;
-
   final Dio _dio = new Dio();
 
   AuthService(){
@@ -30,296 +24,72 @@ class AuthService {
 
   Future<LoginResponse> login(String email, String password) async {
 
-    String loginUrl = AppGlobal.baseUrlAuth + "/auth/login";
-
-    print('email '+ email);
-    print('hash '+ password);
-    print('loginUrl '+ loginUrl);
-
     LoginResponse lr;
-
     try {
       var response = await _dio.post(
-          "$loginUrl",
+          AppGlobal.baseUrlAuth + "/auth/login",
           data: {
             "email": email,
             "hash": password
           },
-          options: Options(
-              headers: {
-                "content-type": "application/json",
-                "x-api-key": AppGlobal.api_key
-              }
-          )
-      ).timeout(Duration(seconds: 30));
+          options: httpOptions()
+      ).timeout(Duration(seconds: AppGlobal.secTimeOut));
+
       print(response.statusCode);
       print(response.data);
       var responseData = response.data;
-      lr = LoginResponse.fromJson(responseData);
+      return LoginResponse.fromJson(responseData);
     } on DioError catch (e) {
-      lr = new LoginResponse();
-      lr.status = e.type.toString();
-      lr.response = e.message;
-      lr.code = e.error.toString();
-      print(e);
-      print(lr.status);
-      print(lr.response);
-      print(lr.code);
+      return exceptionError(e, lr);
     }
-    return lr;
   }
 
-  Future<UserResponse> register(String name, String email, String password) async {
-
-    String signupUrl = AppGlobal.baseUrlAuth + "/accounts/register";
-
-    print('>>>>>> signupUrl:'+signupUrl);
-
+  Future<UserResponse> httpPost(User user, String url) async {
+    String endpoint = AppGlobal.baseUrlAuth + url;
     UserResponse usr = new UserResponse();
     try {
       var response = await _dio.post(
-          "$signupUrl",
-          data: {
-            "name": name,
-            "email": email,
-            "hash": password
-          },
-          options: Options(
-              headers: {
-                "content-type": "application/json",
-                "x-api-key": AppGlobal.api_key
-              }
-          )
-      ).timeout(Duration(seconds: 30));
-      print(response.statusCode);
-      print(response.data);
-      var responseData = response.data;
-      usr = UserResponse.fromJson(responseData);
-      usr.statusCode = response.statusCode.toString();
-      usr.statusMessage = response.statusMessage;
+          "$endpoint",
+          data: dataRequest(user),
+          options: httpOptions()
+      ).timeout(Duration(seconds: AppGlobal.secTimeOut));
 
-      print(usr.toString());
+      return extractUserResponse(response);
     } on DioError catch (e) {
-      usr = new UserResponse();
-      usr.statusMessage = e.message;
-      usr.statusCode = e.error.toString();
-      print(e);
-      print(usr.statusMessage);
-      print(usr.statusCode);
+      return exceptionError(e, usr);
     }
+  }
+
+  dynamic dataRequest(User user) {
+    return ({
+      "name": user.name,
+      "email": user.email,
+      "hash": user.hash,
+      "verify_code": user.verify_code
+    });
+  }
+
+  Options httpOptions() {
+    return new Options(headers: {
+      "content-type": "application/json",
+      "x-api-key": AppGlobal.api_key
+    });
+  }
+
+  UserResponse extractUserResponse(dynamic response){
+    var responseData = response.data;
+    UserResponse usr = UserResponse.fromJson(responseData);
+    usr.statusCode = response.statusCode.toString();
+    usr.statusMessage = response.statusMessage;
     return usr;
   }
 
-  Future<UserResponse> confirm(User user) async {
-
-    String confirmUrl = AppGlobal.baseUrlAuth + "/accounts/confirm";
-
-    print('>>>>>> confirmUrl:'+confirmUrl);
-
-    UserResponse usr = new UserResponse();
-    try {
-      var response = await _dio.post(
-          "$confirmUrl",
-          data: {
-            "email": user.email,
-            "verify_code": user.verify_code
-          },
-          options: Options(
-              headers: {
-                "content-type": "application/json",
-                "x-api-key": AppGlobal.api_key
-              }
-          )
-      ).timeout(Duration(seconds: 30));
-      print(response.statusCode);
-      print(response.data);
-      var responseData = response.data;
-      usr = UserResponse.fromJson(responseData);
-      usr.statusCode = response.statusCode.toString();
-      usr.statusMessage = response.statusMessage;
-
-      print(usr.toString());
-    } on DioError catch (e) {
-      usr = new UserResponse();
-      usr.statusMessage = e.message;
-      usr.statusCode = e.error.toString();
-      print(e);
-      print(usr.statusMessage);
-      print(usr.statusCode);
-    }
-    return usr;
-  }
-
-  Future<UserResponse> sendRegister(User user) async {
-
-    String sendUrl = AppGlobal.baseUrlAuth + "/accounts/send-register";
-
-    print('>>>>>> sendUrl:'+sendUrl);
-    print('>>>>>> AppGlobal.api_key:'+AppGlobal.api_key);
-    print("name "+ user.name);
-    print("email"+ user.email);
-    print("verify_code"+ user.verify_code);
-
-    UserResponse userResponse = new UserResponse();
-    try {
-      var response = await _dio.post(
-          "$sendUrl",
-          data: {
-            "name": user.name,
-            "email": user.email,
-            "verify_code": user.verify_code,
-          },
-          options: Options(
-              headers: {
-                "content-type": "application/json",
-                "x-api-key": AppGlobal.api_key
-              }
-          )
-      ).timeout(Duration(seconds: 30));
-      print(response.statusCode);
-      print(response.data);
-      var responseData = response.data;
-      userResponse = UserResponse.fromJson(responseData);
-      userResponse.statusCode = response.statusCode.toString();
-      userResponse.statusMessage = response.statusMessage;
-
-      print(userResponse.toString());
-    } on DioError catch (e) {
-      userResponse = new UserResponse();
-      userResponse.statusMessage = e.message;
-      userResponse.statusCode = e.error.toString();
-      print(e);
-      print(userResponse.statusMessage);
-      print(userResponse.statusCode);
-    }
-    return userResponse;
-
-  }
-
-  Future<UserResponse> forgot(User user) async {
-
-    String forgotUrl = AppGlobal.baseUrlAuth + "/accounts/forgot-password";
-
-    print('>>>>>> forgotUrl:'+forgotUrl);
-
-    UserResponse usr = new UserResponse();
-    try {
-      var response = await _dio.post(
-          "$forgotUrl",
-          data: {
-            "email": user.email,
-          },
-          options: Options(
-              headers: {
-                "content-type": "application/json",
-                "x-api-key": AppGlobal.api_key
-              }
-          )
-      ).timeout(Duration(seconds: 30));
-      print(response.statusCode);
-      print(response.data);
-      var responseData = response.data;
-      usr = UserResponse.fromJson(responseData);
-      usr.statusCode = response.statusCode.toString();
-      usr.statusMessage = response.statusMessage;
-
-      print(usr.toString());
-    } on DioError catch (e) {
-      usr = new UserResponse();
-      usr.statusMessage = e.message;
-      usr.statusCode = e.error.toString();
-      print(e);
-      print(usr.statusMessage);
-      print(usr.statusCode);
-    }
-    return usr;
-  }
-
-  Future<UserResponse> sendForgot(User user) async {
-
-    String sendUrl = AppGlobal.baseUrlAuth + "/accounts/send-forgot";
-
-    print('>>>>>> sendUrl:'+sendUrl);
-    print('>>>>>> AppGlobal.api_key:'+AppGlobal.api_key);
-    print("name "+ user.name);
-    print("email"+ user.email);
-    print("verify_code"+ user.verify_code);
-
-    UserResponse userResponse = new UserResponse();
-    try {
-      var response = await _dio.post(
-          "$sendUrl",
-          data: {
-            "name": user.name,
-            "email": user.email,
-            "verify_code": user.verify_code,
-          },
-          options: Options(
-              headers: {
-                "content-type": "application/json",
-                "x-api-key": AppGlobal.api_key
-              }
-          )
-      ).timeout(Duration(seconds: 30));
-      print(response.statusCode);
-      print(response.data);
-      var responseData = response.data;
-      userResponse = UserResponse.fromJson(responseData);
-      userResponse.statusCode = response.statusCode.toString();
-      userResponse.statusMessage = response.statusMessage;
-
-      print(userResponse.toString());
-    } on DioError catch (e) {
-      userResponse = new UserResponse();
-      userResponse.statusMessage = e.message;
-      userResponse.statusCode = e.error.toString();
-      print(e);
-      print(userResponse.statusMessage);
-      print(userResponse.statusCode);
-    }
-    return userResponse;
-
-  }
-
-
-  Future<UserResponse> reset(User user) async {
-
-    String resetUrl = AppGlobal.baseUrlAuth + "/accounts/reset-password";
-
-    print('>>>>>> resetUrl:'+resetUrl);
-
-    UserResponse usr = new UserResponse();
-    try {
-      var response = await _dio.post(
-          "$resetUrl",
-          data: {
-            "email": user.email,
-            "hash": user.hash,
-            "verify_code": user.verify_code
-          },
-          options: Options(
-              headers: {
-                "content-type": "application/json",
-                "x-api-key": AppGlobal.api_key
-              }
-          )
-      ).timeout(Duration(seconds: 30));
-      print(response.statusCode);
-      print(response.data);
-      var responseData = response.data;
-      usr = UserResponse.fromJson(responseData);
-      usr.statusCode = response.statusCode.toString();
-      usr.statusMessage = response.statusMessage;
-
-      print(usr.toString());
-    } on DioError catch (e) {
-      usr = new UserResponse();
-      usr.statusMessage = e.message;
-      usr.statusCode = e.error.toString();
-      print(e);
-      print(usr.statusMessage);
-      print(usr.statusCode);
-    }
+  dynamic exceptionError(DioError e, dynamic usr) {
+    usr.statusMessage = e.message;
+    usr.statusCode = e.error.toString();
+    print(e);
+    print(usr.statusMessage);
+    print(usr.statusCode);
     return usr;
   }
 

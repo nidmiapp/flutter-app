@@ -156,7 +156,7 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
     });
 
     logger.i('  verify_code:===>>>'+user.verify_code +'  email:===>>>'+user.email );
-    await authService.confirm(user)
+    await authService.httpPost(user,"/accounts/confirm")
         .then((result) async {
       if (result != null)  {
         setState(() {

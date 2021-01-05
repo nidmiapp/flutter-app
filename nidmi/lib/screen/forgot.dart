@@ -139,7 +139,7 @@ class TextFormFieldForgotState extends State<TextFormFieldForgot> {
     });
 
     logger.i('  email:===>>>'+user.email );
-    await authService.forgot(user)
+    await authService.httpPost(user, "/accounts/forgot-password")
         .then((result) async {
       if (result != null)  {
         if(result.statusCode.startsWith('2')) { // 200, 201, ...
@@ -152,7 +152,7 @@ class TextFormFieldForgotState extends State<TextFormFieldForgot> {
 //        user.user_id = result.user_id;
 //        user.confirmed = result.confirmed;
           AppGlobal.single_instance.user = user;
-          await authService.sendForgot(user)
+          await authService.httpPost(user, "/accounts/send-forgot")
               .then((sendRes) async {
             if (sendRes != null) {
               setState(() {

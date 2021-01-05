@@ -191,8 +191,8 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
       isLoading = true;
     });
 
-    logger.i('  email:===>>>'+person.name +'  email:===>>>'+person.email +'  pass:===>>>'+ person.password);
-    await authService.register(person.name, person.email, person.password)
+    User usr = new User(email: person.email, name: person.name, hash: person.password);
+    await authService.httpPost(usr, "/accounts/register")
         .then((result) async {
       if (result != null)  {
         logger.i('  statusCode:====>>>' + result.statusCode +
@@ -206,7 +206,7 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
 //        user.confirmed = result.confirmed;
         AppGlobal.single_instance.user = user;
         if(result.statusCode.startsWith('2')) { // 200, 201, ...
-          await authService.sendRegister(user)
+          await authService.httpPost(user, "/accounts/send-register")
               .then((sendRes) async {
             if (sendRes != null) {
               setState(() {

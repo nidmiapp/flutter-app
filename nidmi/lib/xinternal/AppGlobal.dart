@@ -19,6 +19,14 @@ class AppGlobal {
     _user = value;
   }
 
+  static int _secTimeOut=30;
+
+  static int get secTimeOut => _secTimeOut;
+
+  static set secTimeOut(int value) {
+    _secTimeOut = value;
+  }
+
   static String _userEmail;
 
   String get userEmail => _userEmail;

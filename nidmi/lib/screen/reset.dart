@@ -202,7 +202,7 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
     });
 
     logger.i('  verify_code:===>>>'+user.verify_code +'  email:===>>>'+user.email );
-    await authService.reset(user)
+    await authService.httpPost(user, "/accounts/reset-password")
         .then((result) async {
       if (result != null)  {
         setState(() {
