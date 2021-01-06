@@ -31,6 +31,9 @@
 .pub/
 /build/
 
+# App related
+/assets/config/
+
 # Web related
 lib/generated_plugin_registrant.dart
 
