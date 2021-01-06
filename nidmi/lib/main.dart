@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screen/register.dart';
+import './screen/splash.dart';
 import 'app_config.dart';
 import 'xinternal/AppGlobal.dart';
 
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: SignUp()
+        home: Splash(context)
     );
   }
 }

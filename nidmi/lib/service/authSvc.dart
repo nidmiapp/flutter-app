@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
@@ -55,8 +56,34 @@ class AuthService {
       ).timeout(Duration(seconds: AppGlobal.secTimeOut));
 
       return extractUserResponse(response);
+    } on HttpException catch (e) {
+      usr.statusMessage = e.message;
+      usr.statusCode = '400';
+      print(e);
+      print(usr.statusMessage);
+      print(usr.statusCode);
+      return usr;
+    } on SocketException catch (e) {
+      usr.statusMessage = e.message;
+      usr.statusCode = '400';
+      print(e);
+      print(usr.statusMessage);
+      print(usr.statusCode);
+      return usr;
+    } on TimeoutException catch (e) {
+      usr.statusMessage = e.message;
+      usr.statusCode = '500';
+      print(e);
+      print(usr.statusMessage);
+      print(usr.statusCode);
+      return usr;
     } on DioError catch (e) {
-      return exceptionError(e, usr);
+      usr.statusMessage = e.message;
+      usr.statusCode = e.error.toString();
+      print(e);
+      print(usr.statusMessage);
+      print(usr.statusCode);
+      return usr;
     }
   }
 
@@ -72,7 +99,7 @@ class AuthService {
   Options httpOptions() {
     return new Options(headers: {
       "content-type": "application/json",
-      "x-api-key": AppGlobal.api_key
+      "x-api-key": AppGlobal.apiKey
     });
   }
 
@@ -84,7 +111,7 @@ class AuthService {
     return usr;
   }
 
-  dynamic exceptionError(DioError e, dynamic usr) {
+  dynamic exceptionError(dynamic e, dynamic usr) {
     usr.statusMessage = e.message;
     usr.statusCode = e.error.toString();
     print(e);

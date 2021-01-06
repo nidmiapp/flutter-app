@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
-import 'package:nidmi/entity/User.dart';
-import 'package:nidmi/screen/forgot.dart';
-import 'package:nidmi/screen/register.dart';
-import 'package:nidmi/screen/reset.dart';
-import 'package:nidmi/screen/splash.dart';
-import 'package:nidmi/service/authSvc.dart';
-import 'package:nidmi/xinternal/AppGlobal.dart';
 
-//import 'package:gallery/l10n/gallery_localizations.dart';
-
+import '../screen/forgot.dart';
+import '../screen/register.dart';
+import '../screen/splash.dart';
+import '../service/authSvc.dart';
+import '../util/validate.dart';
+import '../xinternal/AppGlobal.dart';
 
 class SignIn extends StatelessWidget {
   const SignIn();
@@ -91,10 +87,6 @@ class _PasswordFieldState extends State<PasswordField> {
           child: Icon(
             _obscureText ? Icons.visibility : Icons.visibility_off,
             semanticLabel: _obscureText ? "Show" : "Hide",
-            // ? GalleryLocalizations.of(context)
-            // .demoTextFieldShowPasswordLabel
-            // : GalleryLocalizations.of(context)
-            // .demoTextFieldHidePasswordLabel,
           ),
         ),
       ),
@@ -121,65 +113,29 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
   void _handleSubmittedSignIn() {
     final formIn = _formKeySignIn.currentState;
     if (!formIn.validate()) {
-      _autoValidateMode =
-          AutovalidateMode.always; // Start validating on every change.
-      showInSnackBarSignIn(
-        "One or more fields is not valid!",
-      );
+      _autoValidateMode = AutovalidateMode.always; // Start validating on every change.
+      showInSnackBarSignIn("One or more fields is not valid!",);
     } else {
       formIn.save();
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      _SignIn();
+      _signIn();
     }
   }
-
-  String _validateEmail(String value) {
-    if (value.isEmpty) {
-      return "Email is empty!";
-    }
-    final mailExp = RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-    if (!mailExp.hasMatch(value)) {
-      return "Not a valid email!";
-    }
-    person.email = value;
-    return null;
-  }
-
-  String _validatePassword(String value) {
- //   final passwordField = _passwordFieldKey.currentState;
-    if (value == null || value.isEmpty) {
-      return "Password is empty!";
-    }
-    if (value.length < 6) {
-      return "Password is too short at least(6 character)!";
-    }
-    person.password = value;
-    return null;
-  }
-
-
-  AuthService authService = new AuthService();
-
-  var logger = Logger(
-    printer: PrettyPrinter(),
-  );
 
   bool isLoading = false;
+  ValidateField _validateField = new ValidateField();
+  AuthService authService = new AuthService();
+  var logger = Logger(printer: PrettyPrinter(),);
 
-  _SignIn() async {
+  _signIn() async {
 
-    setState(() {
-      isLoading = true;
-    });
+    setState(() {isLoading = true;});
 
     logger.i('  email:===>>>'+person.email +'  pass:===>>>'+ person.password);
     await authService.login(person.email, person.password)
         .then((result) async {
       if (result != null)  {
-        setState(() {
-          isLoading = false;
-          //show snackbar
-        });
+        setState(() {isLoading = false;});
 
         if(result.code.compareTo('200') == 0) {
           logger.i(
@@ -198,7 +154,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
           AppGlobal.saveUserNameSharedPreference(result.display_name);
           AppGlobal.saveUserEmailSharedPreference(result.email);
           AppGlobal.saveUserExpiredSharedPreference(result.expires_at.toString());
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash(context)));
         } else {
           showInSnackBarSignIn("Not valid!");
           logger.i('  LoginResponse:=>>>'+result.response +
@@ -209,7 +165,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
           AppGlobal.saveUserNameSharedPreference('');
           AppGlobal.saveUserEmailSharedPreference('');
           AppGlobal.saveUserExpiredSharedPreference('');
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash(context)));
         }
 
         logger.i(
@@ -218,21 +174,13 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                 '\n  getUserAccessSharedPreference:==>>>'+ await AppGlobal.getUserAccessSharedPreference()+
                 '\n  getUserRefreshSharedPreference:=>>>'+ await AppGlobal.getUserRefreshSharedPreference()+
                 '\n  getUserExpiredSharedPreference:=>>>'+ await AppGlobal.getUserExpiredSharedPreference()+
-                '\n  isUserExpiredSharedPreference:==>>>'+ await AppGlobal.isUserExpiredSharedPreference().toString()
+                '\n  isUserExpiredSharedPreference:==>>>'+ AppGlobal.isUserExpiredSharedPreference().toString()
         );
-
       } else {
-        setState(() {
-          isLoading = true;
-          //show snackbar
-        });
+        setState(() {isLoading = true;});
       }
     });
-    //}
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -251,9 +199,6 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
           child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
             padding: EdgeInsets.symmetric(horizontal: 16),
-            // decoration: BoxDecoration(
-            //     border: Border.all(color: Colors.green, width: 1.5),
-            //     borderRadius: BorderRadius.circular(8.0)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -264,12 +209,10 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                       Image.asset("assets/images/NidmiLogoSign2Circle150X150.png"),
                     ]
                 ),
-                // Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
                 sizedBoxSpace,
                 TextFormField(
                   decoration: InputDecoration(
                     filled: true,
-                    // icon: const Icon(Icons.email),
                     hintText: "Enter valid email address",
                     labelText: "Email",
                   ),
@@ -277,37 +220,29 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                   onSaved: (value) {
                     person.email = value;
                   },
-                  validator: _validateEmail,
+                  validator: _validateField.validateEmail,
                 ),
                 sizedBoxSpace,
                 PasswordField(
                   fieldKeySignIn: _passwordFieldKey,
-                  // helperText:
-                  // "Password",
-                  labelText:
-                  "Enter password",
+                  labelText: "Enter password",
                   onFieldSubmitted: (value) {
                     setState(() {
                       person.password = value;
                     });
                   },
-                  validator: _validatePassword,
+                  validator: _validateField.validatePassword,
                 ),
                 sizedBoxSpace,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // Text(
-                    //   "Have not an account? ",
-                    //   style: TextStyle(decorationColor: Colors.deepOrange, color: Colors.black, fontSize: 16),
-                    // ),
                     GestureDetector(
                       onTap: () {
                         ScaffoldMessenger.of(context).removeCurrentSnackBar();
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Forgot()));
                       },
-                      child: Text(
-                        "Forgot Password",
+                      child: Text("Forgot Password",
                         style: TextStyle(
                             color: Colors.blue,
                             fontSize: 16,
@@ -319,8 +254,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                 sizedBoxSpace,
                 Center(
                   child: ElevatedButton(
-                    child: Text(
-                        "  Sign In  "),
+                    child: Text("  Sign In  "),
                     onPressed: _handleSubmittedSignIn,
                   ),
                 ),
@@ -328,8 +262,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Have not an account? ",
+                    Text("Have not an account? ",
                       style: TextStyle(decorationColor: Colors.deepOrange, color: Colors.black, fontSize: 16),
                     ),
                     GestureDetector(
@@ -337,8 +270,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                         ScaffoldMessenger.of(context).removeCurrentSnackBar();
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()));
                       },
-                      child: Text(
-                        "ًRegister",
+                      child: Text("ًRegister",
                         style: TextStyle(
                             color: Colors.blue,
                             fontSize: 16,

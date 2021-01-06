@@ -1,4 +1,3 @@
-//import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:nidmi/entity/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,28 +11,22 @@ class AppGlobal {
   );
 
   static User _user = new User();
-
+  // ignore: unnecessary_getters_setters
   User get user => _user;
-
-  set user(User value) {
-    _user = value;
-  }
+  // ignore: unnecessary_getters_setters
+  set user(User value) { _user = value; }
 
   static int _secTimeOut=30;
-
+  // ignore: unnecessary_getters_setters
   static int get secTimeOut => _secTimeOut;
-
-  static set secTimeOut(int value) {
-    _secTimeOut = value;
-  }
+  // ignore: unnecessary_getters_setters
+  static set secTimeOut(int value) { _secTimeOut = value; }
 
   static String _userEmail;
-
+  // ignore: unnecessary_getters_setters
   String get userEmail => _userEmail;
-
-  set userEmail(String value) {
-    _userEmail = value;
-  }
+  // ignore: unnecessary_getters_setters
+  set userEmail(String value) { _userEmail = value; }
 
   static String baseUrlAuth;
   static String baseUrlAccInfo;
@@ -43,9 +36,9 @@ class AppGlobal {
   static String baseUrlPayment;
   static String baseUrlReview;
   static String baseUrlUtil;
-  static String api_key;
-  static String secret_key;
-  static String cipher_key;
+  static String apiKey;
+  static String secretKey;
+  static String cipherKey;
 
   static String sharedPreferenceUserExpiry = "USEREXPIRY";
   static String sharedPreferenceUserNameKey = "USERNAMEKEY";
@@ -55,6 +48,7 @@ class AppGlobal {
 
   static ThemeData appThemeData = new ThemeData();
 
+  // ignore: non_constant_identifier_names
   static AppGlobal _single_instance;
 
   AppConfig appConfig=AppConfig.single_instance;
@@ -70,12 +64,13 @@ class AppGlobal {
     baseUrlPayment,
     baseUrlReview,
     baseUrlUtil,
-    api_key,
-    secret_key,
-    cipher_key
+    apiKey,
+    secretKey,
+    cipherKey
   }) {
     return _single_instance;
   }
+  // ignore: non_constant_identifier_names
   static AppGlobal get single_instance {
     if(_single_instance==null)
       _single_instance = new AppGlobal._internal();
@@ -92,13 +87,13 @@ class AppGlobal {
     baseUrlPayment= AppConfig.baseUrlPayment;
     baseUrlReview = AppConfig.baseUrlReview;
     baseUrlUtil   = AppConfig.baseUrlUtil;
-    api_key = AppConfig.api_key;
-    secret_key = AppConfig.secret_key;
-    cipher_key = AppConfig.cipher_key;
+    apiKey = AppConfig.apiKey;
+    secretKey = AppConfig.secretKey;
+    cipherKey = AppConfig.cipherKey;
 
-    print(api_key);
-    print(secret_key);
-    print(secret_key);
+    print(apiKey);
+    print(secretKey);
+    print(cipherKey);
     print(AppGlobal().hashCode.toString());
     return new AppGlobal(
       baseUrlAuth: baseUrlAuth,
@@ -109,9 +104,9 @@ class AppGlobal {
       baseUrlPayment: baseUrlPayment,
       baseUrlReview: baseUrlReview,
       baseUrlUtil: baseUrlUtil,
-      api_key: api_key,
-      secret_key: secret_key,
-      cipher_key: cipher_key
+      apiKey: apiKey,
+      secretKey: secretKey,
+      cipherKey: cipherKey
     );
   }
 
@@ -145,11 +140,10 @@ class AppGlobal {
 
   static Future<bool> isUserExpiredSharedPreference() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String userExp = await preferences.getString(sharedPreferenceUserExpiry);
+    String userExp = preferences.getString(sharedPreferenceUserExpiry);
 
     if(userExp==null)
       return true;
-    var uexp = DateTime.parse(userExp);
     var now = new DateTime.now().toUtc().add(new Duration(hours: 1));
     logger.i(
         '  userExp:=============>>>'+ userExp +
@@ -160,32 +154,32 @@ class AppGlobal {
 
   static Future<String> getUserExpiredSharedPreference() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String userExp = await preferences.getString(sharedPreferenceUserExpiry);
+    String userExp = preferences.getString(sharedPreferenceUserExpiry);
     return userExp;
   }
 
   static Future<String> getUserNameSharedPreference() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(sharedPreferenceUserNameKey);
+    return preferences.getString(sharedPreferenceUserNameKey);
   }
 
   static Future<String> getUserEmailSharedPreference() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(sharedPreferenceUserEmailKey);
+    return preferences.getString(sharedPreferenceUserEmailKey);
   }
 
   static Future<String> getUserAccessSharedPreference() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(sharedPreferenceAccessKey);
+    return preferences.getString(sharedPreferenceAccessKey);
   }
 
   static Future<String> getUserRefreshSharedPreference() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(sharedPreferenceRefreshKey);
+    return preferences.getString(sharedPreferenceRefreshKey);
   }
 
-  changeAppThemeColor(int option){
-    switch(option){
+  changeAppThemeColor(int option) {
+    switch(option) {
       case 0:
         appThemeData = new ThemeData(
           brightness:Brightness.light,

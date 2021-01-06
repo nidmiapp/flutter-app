@@ -12,9 +12,9 @@ class AppConfig {
   static String baseUrlPayment;
   static String baseUrlReview;
   static String baseUrlUtil;
-  static String api_key;
-  static String secret_key;
-  static String cipher_key;
+  static String apiKey;
+  static String secretKey;
+  static String cipherKey;
 
   static String ENVIRONMENT;
   // ignore: non_constant_identifier_names
@@ -29,7 +29,7 @@ class AppConfig {
     return _single_instance;
   }
   
-  factory AppConfig({baseUrlAuth, baseUrlAccInfo, baseUrlRequest, baseUrlReply, baseUrlChat, baseUrlPayment, baseUrlReview, baseUrlUtil, api_key, secret_key, cipher_key}) {
+  factory AppConfig({baseUrlAuth, baseUrlAccInfo, baseUrlRequest, baseUrlReply, baseUrlChat, baseUrlPayment, baseUrlReview, baseUrlUtil, apiKey, secretKey, cipherKey}) {
     return _single_instance;
   }
 
@@ -66,9 +66,9 @@ class AppConfig {
     baseUrlPayment = json['baseUrlPayment'].toString();
     baseUrlReview = json['baseUrlReview'].toString();
     baseUrlUtil = json['baseUrlUtil'].toString();
-    api_key = json['api_key'].toString();
-    secret_key = json['secret_key'].toString();
-    cipher_key = json['cipher_key'].toString();
+    apiKey = json['apiKey'].toString();
+    secretKey = json['secretKey'].toString();
+    cipherKey = json['cipherKey'].toString();
 
     print("json[\'baseUrlAuth\'] "+json['baseUrlAuth']);
     print("baseUrlAuth "+baseUrlAuth);
@@ -82,9 +82,9 @@ class AppConfig {
         baseUrlPayment: json['baseUrlPayment'],
         baseUrlReview: json['baseUrlReview'],
         baseUrlUtil: json['baseUrlUtil'],
-        api_key: json['api_key'],
-        secret_key: json['secret_key'],
-        cipher_key: json['cipher_key']
+        apiKey: json['apiKey'],
+        secretKey: json['secretKey'],
+        cipherKey: json['cipherKey']
     );
   }
 }

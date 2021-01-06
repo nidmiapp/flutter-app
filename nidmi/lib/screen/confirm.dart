@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
-import 'package:nidmi/entity/User.dart';
-import 'package:nidmi/screen/signin.dart';
-import 'package:nidmi/service/authSvc.dart';
-import 'package:nidmi/xinternal/AppGlobal.dart';
-
-//import 'package:gallery/l10n/gallery_localizations.dart';
-
+import '../entity/User.dart';
+import '../screen/signin.dart';
+import '../service/authSvc.dart';
+import '../util/validate.dart';
+import '../xinternal/AppGlobal.dart';
 
 class Confirm extends StatelessWidget {
   const Confirm();
@@ -57,13 +55,11 @@ class ConfirmField extends StatefulWidget {
 }
 
 class _ConfirmFieldState extends State<ConfirmField> {
-//  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       key: widget.fieldKeyConfirm,
-//      obscureText: _obscureText,
       maxLength: 6,
       onSaved: widget.onSaved,
       validator: widget.validator,
@@ -96,73 +92,32 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
   void _handleSubmittedConfirm() {
     final formIn = _formKeyConfirm.currentState;
     if (!formIn.validate()) {
-      _autoValidateMode =
-          AutovalidateMode.always; // Start validating on every change.
-      showInSnackBarConfirm(
-        "One or more fields is not valid!",
-      );
+      _autoValidateMode =  AutovalidateMode.always; // Start validating on every change.
+      showInSnackBarConfirm("One or more fields is not valid!",);
     } else {
       formIn.save();
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      _Confirm();
+      _confirm();
     }
   }
-
-  String _validateEmail(String value) {
-    if (value.isEmpty) {
-      return "Email is empty!";
-    }
-    final mailExp = RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-    if (!mailExp.hasMatch(value)) {
-      return "Not a valid email!";
-    }
-    return null;
-  }
-
-  String _validateVerify(String value) {
-    final verifyField = _verifyFieldKey.currentState;
-    if (verifyField.value == null || verifyField.value.isEmpty) {
-      return "Code is empty!";
-    }
-
-    if (int.tryParse(verifyField.value)==null) {
-      return "Not a valid! or Should be 6 digits!";
-    }
-
-    if (verifyField.value.length != 6 ) {
-      return "Code Should be 6 digits!";
-    }
-    return null;
-  }
-
-
-  AuthService authService = new AuthService();
-
-  var logger = Logger(
-    printer: PrettyPrinter(),
-  );
 
   bool isLoading = false;
-
+  ValidateField _validateField = new ValidateField();
+  AuthService authService = new AuthService();
   AppGlobal appGlobal = new AppGlobal();
+  var logger = Logger(printer: PrettyPrinter(),);
+  User user  = AppGlobal().user;
 
-  User user = AppGlobal().user;
+  _confirm() async {
 
-  _Confirm() async {
-
-
-    setState(() {
-      isLoading = true;
-    });
+    setState(() {isLoading = true;});
+    appGlobal.userEmail = user.email;
 
     logger.i('  verify_code:===>>>'+user.verify_code +'  email:===>>>'+user.email );
     await authService.httpPost(user,"/accounts/confirm")
         .then((result) async {
       if (result != null)  {
-        setState(() {
-          isLoading = false;
-          //show snackbar
-        });
+        setState(() {isLoading = false; });
         logger.i('  statusCode:====>>>' + result.statusCode +
             '\n  statusMessage:=>>>' + result.statusMessage );
 
@@ -176,13 +131,9 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
           showInSnackBarConfirm("Not valid!");
         }
       } else {
-        setState(() {
-          isLoading = true;
-          //show snackbar
-        });
+        setState(() {isLoading = true;});
       }
     });
-    //}
   }
 
   @override
@@ -202,9 +153,6 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
           child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
             padding: EdgeInsets.symmetric(horizontal: 16),
-            // decoration: BoxDecoration(
-            //     border: Border.all(color: Colors.green, width: 1.5),
-            //     borderRadius: BorderRadius.circular(8.0)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -219,8 +167,7 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      "Verification code has been sent to your email",
+                    Text("Verification code has been sent to your email",
                       style: TextStyle(
                           color: Colors.deepOrange[500],
                           fontWeight: FontWeight.normal,
@@ -232,36 +179,31 @@ class TextFormFieldConfirmState extends State<TextFormFieldConfirm> {
                 TextFormField(
                   decoration: InputDecoration(
                     filled: true,
-                    // icon: const Icon(Icons.email),
                     hintText: "Enter valid email address",
                     labelText: "Email",
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  initialValue: AppGlobal().userEmail,
+                  initialValue: appGlobal.userEmail,
                   onSaved: (value) {
                     user.email = value;
                   },
-                  validator: _validateEmail,
+                  validator: _validateField.validateEmail,
                 ),
                 sizedBoxSpace,
                 ConfirmField(
                   fieldKeyConfirm: _verifyFieldKey,
-                  // helperText:
-                  // "Verify",
-                  labelText:
-                  "Enter verify",
+                  labelText: "Enter verify",
                   onFieldSubmitted: (value) {
                     setState(() {
                       user.verify_code = value;
                     });
                   },
-                  validator: _validateVerify,
+                  validator: _validateField.validateVerify,
                 ),
                 sizedBoxSpace,
                 Center(
                   child: ElevatedButton(
-                    child: Text(
-                        "  Confirm  "),
+                    child: Text("  Confirm  "),
                     onPressed: _handleSubmittedConfirm,
                   ),
                 ),

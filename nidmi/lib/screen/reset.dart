@@ -1,14 +1,13 @@
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
-import 'package:nidmi/entity/User.dart';
 
-import 'package:nidmi/screen/signin.dart';
-import 'package:nidmi/service/authSvc.dart';
-import 'package:nidmi/xinternal/AppGlobal.dart';
+import '../entity/User.dart';
+import '../screen/signin.dart';
+import '../service/authSvc.dart';
+import '../util/validate.dart';
+import '../xinternal/AppGlobal.dart';
 
 class Reset extends StatelessWidget {
   const Reset();
@@ -88,10 +87,6 @@ class _PasswordFieldState extends State<PasswordField> {
           child: Icon(
             _obscureText ? Icons.visibility : Icons.visibility_off,
             semanticLabel: _obscureText ? "Show" : "Hide",
-            // ? GalleryLocalizations.of(context)
-            // .demoTextFieldShowPasswordLabel
-            // : GalleryLocalizations.of(context)
-            // .demoTextFieldHidePasswordLabel,
           ),
         ),
       ),
@@ -101,6 +96,14 @@ class _PasswordFieldState extends State<PasswordField> {
 
 class TextFormFieldResetState extends State<TextFormFieldReset> {
   ResetData person = ResetData();
+
+  bool isLoading = false;
+  ValidateField _validateField  = new ValidateField();
+  AuthService authService = new AuthService();
+  AppGlobal appGlobal = new AppGlobal();
+  var logger = Logger(printer: PrettyPrinter(),);
+  User user = AppGlobal().user;
+
 
   void showInSnackBarReset(String value) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -112,103 +115,32 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
   final GlobalKey<FormState> _formKeyReset = GlobalKey<FormState>();
-  final GlobalKey<FormFieldState<String>> _verifyFieldKey =
-  GlobalKey<FormFieldState<String>>();
   final GlobalKey<FormFieldState<String>> _passwordFieldKey =
   GlobalKey<FormFieldState<String>>();
-  // final _UsNumberTextInputFormatter _phoneNumberFormatter =
-  // _UsNumberTextInputFormatter();
 
   void _handleSubmittedReset() {
     final formRe = _formKeyReset.currentState;
     if (!formRe.validate()) {
-      _autoValidateMode =
-          AutovalidateMode.always; // Start validating on every change.
-      showInSnackBarReset(
-        "One or more fields is not valid!",
-      );
+      _autoValidateMode = AutovalidateMode.always; // Start validating on every change.
+      showInSnackBarReset("One or more fields is not valid!",);
     } else {
       formRe.save();
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      _Reset();
-      // showInSnackBarReset(
-      //     person.verify+'  '+person.email+'  '+person.password
-      //);
+      user.hash = person.password;
+      user.email = person.email;
+      _reset();
     }
   }
 
-  String _validateVerify(String value) {
-//    final verifyField = _verifyFieldKey.currentState;
-    if (value == null || value.isEmpty) {
-      return "Code is empty!";
-    }
+  _reset() async {
 
-    if (int.tryParse(value)==null) {
-      return "Not a valid! or Should be 6 digits!";
-    }
-
-    if (value.length != 6 ) {
-      return "Code Should be 6 digits!";
-    }
-    user.verify_code = value;
-    return null;
-  }
-
-  String _validateEmail(String value) {
-    if (value.isEmpty) {
-      return "Email is empty!";
-    }
-    final mailExp = RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-    if (!mailExp.hasMatch(value)) {
-      return "Not a valid email!";
-    }
-    user.email = value;
-    return null;
-  }
-
-  String _validatePassword(String value) {
-    final passwordField = _passwordFieldKey.currentState;
-    if (value == null || value.isEmpty) {
-      return "Password is empty!";
-    }
-    if (passwordField.value != value) {
-      return "Password is not match!";
-    }
-    if (value.length < 6) {
-      return "Password is too short at least(6 character)!";
-    }
-    user.hash = value;
-    return null;
-  }
-
-
-  AuthService authService = new AuthService();
-
-  var logger = Logger(
-    printer: PrettyPrinter(),
-  );
-
-  bool isLoading = false;
-
-  AppGlobal appGlobal = new AppGlobal();
-
-  User user = AppGlobal().user;
-
-  _Reset() async {
-
-
-    setState(() {
-      isLoading = true;
-    });
+    setState(() {isLoading = true;});
 
     logger.i('  verify_code:===>>>'+user.verify_code +'  email:===>>>'+user.email );
     await authService.httpPost(user, "/accounts/reset-password")
         .then((result) async {
       if (result != null)  {
-        setState(() {
-          isLoading = false;
-          //show snackbar
-        });
+        setState(() {isLoading = false;});
         logger.i('  statusCode:====>>>' + result.statusCode +
             '\n  statusMessage:=>>>' + result.statusMessage );
         logger.i('  email:====>>>' + result.email +
@@ -216,22 +148,14 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
 
         if(result.statusCode.startsWith('2')) { // 200, 201, ...
           ScaffoldMessenger.of(context).removeCurrentSnackBar();
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SignIn()));
+          Navigator.pushReplacement(context,
+              MaterialPageRoute( builder: (context) => SignIn()));
         }
       } else {
-        setState(() {
-          isLoading = true;
-          //show snackbar
-        });
+        setState(() {isLoading = true;});
       }
     });
-    //}
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -250,9 +174,6 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
           child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
             padding: EdgeInsets.symmetric(horizontal: 16),
-            // decoration: BoxDecoration(
-            //     border: Border.all(color: Colors.green, width: 1.5),
-            //     borderRadius: BorderRadius.circular(8.0)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -267,8 +188,7 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      "Verification code has been sent to your email",
+                    Text("Verification code has been sent to your email",
                       style: TextStyle(
                           color: Colors.deepOrange[500],
                           fontWeight: FontWeight.normal,
@@ -278,24 +198,20 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
                 ),
                 sizedBoxSpace,
                 TextFormField(
-                  //textCapitalization: TextCapitalization.words,
                   decoration: InputDecoration(
                     filled: true,
-                    // icon: const Icon(Icons.person),
                     hintText: "Enter verify code",
-                    labelText:
-                    "verify code",
+                    labelText: "verify code",
                   ),
                   onSaved: (value) {
                     person.verifyCode = value;
                   },
-                  validator: _validateVerify,
+                  validator: _validateField.validateVerify,
                 ),
                 sizedBoxSpace,
                 TextFormField(
                   decoration: InputDecoration(
                     filled: true,
-                    // icon: const Icon(Icons.email),
                     hintText: "Enter valid email address",
                     labelText: "Email",
                   ),
@@ -303,36 +219,22 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
                   onSaved: (value) {
                     person.email = value;
                   },
-                  validator: _validateEmail,
+                  validator: _validateField.validateEmail,
                 ),
                 sizedBoxSpace,
                 PasswordField(
                   fieldKeyReset: _passwordFieldKey,
-                  // helperText:
-                  // "Password",
                   labelText:
                   "Enter password",
-                  onFieldSubmitted: (value) {
-                    setState(() {
-                      person.password = value;
-                    });
+                  validator: _validateField.validatePassword,
+                  onSaved: (value) {
+                    person.password = value;
                   },
-                ),
-                sizedBoxSpace,
-                TextFormField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    labelText: "Re-Enter Password",
-                  ),
-                  maxLength: 24,
-                  obscureText: true,
-                  validator: _validatePassword,
                 ),
                 sizedBoxSpace,
                 Center(
                   child: ElevatedButton(
-                    child: Text(
-                        "  Reset  "),
+                    child: Text("  Reset  "),
                     onPressed: _handleSubmittedReset,
                   ),
                 ),

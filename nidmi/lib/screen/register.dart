@@ -1,19 +1,14 @@
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
-import 'package:nidmi/entity/User.dart';
 
+import '../entity/User.dart';
+import '../util/validate.dart';
 import '../screen/signin.dart';
 import '../service/authSvc.dart';
 import '../xinternal/AppGlobal.dart';
-
 import 'confirm.dart';
-
-//import 'package:gallery/l10n/gallery_localizations.dart';
-
 
 class SignUp extends StatelessWidget {
   const SignUp();
@@ -37,10 +32,11 @@ class TextFormFieldSignup extends StatefulWidget {
   TextFormFieldSignupState createState() => TextFormFieldSignupState();
 }
 
-class SignupData {
+class Data {
   String name = '';
   String email = '';
   String password = '';
+//  String password2 = '';
 }
 
 class PasswordField extends StatefulWidget {
@@ -93,10 +89,6 @@ class _PasswordFieldState extends State<PasswordField> {
           child: Icon(
             _obscureText ? Icons.visibility : Icons.visibility_off,
             semanticLabel: _obscureText ? "Show" : "Hide",
-            // ? GalleryLocalizations.of(context)
-            // .demoTextFieldShowPasswordLabel
-            // : GalleryLocalizations.of(context)
-            // .demoTextFieldHidePasswordLabel,
           ),
         ),
       ),
@@ -105,7 +97,15 @@ class _PasswordFieldState extends State<PasswordField> {
 }
 
 class TextFormFieldSignupState extends State<TextFormFieldSignup> {
-  SignupData person = SignupData();
+  Data person = Data();
+
+  void _setState(bool b) {
+    setState(() { isLoading = b; });
+  }
+  void _setStateSnack(){
+    setState(() { isLoading = false; });
+    showInSnackBarSignUp("Connection error!");
+  }
 
   void showInSnackBarSignUp(String value) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -119,77 +119,33 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
   final GlobalKey<FormState> _formKeySignUp = GlobalKey<FormState>();
   final GlobalKey<FormFieldState<String>> _passwordFieldKey =
   GlobalKey<FormFieldState<String>>();
-  // final _UsNumberTextInputFormatter _phoneNumberFormatter =
-  // _UsNumberTextInputFormatter();
 
   void _handleSubmittedSignUp() {
     final formUp = _formKeySignUp.currentState;
     if (!formUp.validate()) {
-      _autoValidateMode =
-          AutovalidateMode.always; // Start validating on every change.
-      showInSnackBarSignUp(
-        "One or more fields is not valid!",
-      );
+      _autoValidateMode = AutovalidateMode.always; // Start validating on every change.
+      showInSnackBarSignUp("One or more fields is not valid!",);
     } else {
       formUp.save();
-      _SignUp();
+      User user = new User();
+      user.email = person.email;
+      user.hash = person.password;
+      appGlobal.user = user;
+      _signUp();
     }
   }
-
-  String _validateName(String value) {
-    if (value.isEmpty) {
-      return "Username is empty!";
-    }
-    final nameExp = RegExp(r'^[A-Za-z][A-Za-z0-9 _-]+$');
-    if (!nameExp.hasMatch(value)) {
-      return "Invalid character used!";
-    }
-    return null;
-  }
-
-  String _validateEmail(String value) {
-    if (value.isEmpty) {
-      return "Email is empty!";
-    }
-    final mailExp = RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-    if (!mailExp.hasMatch(value)) {
-      return "Not a valid email!";
-    }
-    return null;
-  }
-
-  String _validatePassword(String value) {
-    final passwordField = _passwordFieldKey.currentState;
-    if (passwordField.value == null || passwordField.value.isEmpty) {
-      return "Password is empty!";
-    }
-    if (passwordField.value != value) {
-      return "Password is not match!";
-    }
-    if (passwordField.value.length < 6) {
-      return "Password is too short at least(6 character)!";
-    }
-    person.password = value;
-    return null;
-  }
-
-  AuthService authService = new AuthService();
-
-  var logger = Logger(
-    printer: PrettyPrinter(),
-  );
 
   bool isLoading = false;
+  ValidateField _validateField = new ValidateField();
+  AuthService authService = new AuthService();
+  AppGlobal appGlobal = AppGlobal.single_instance;
+  var logger = Logger(printer: PrettyPrinter(),);
 
-  _SignUp() async {
-
-    AppGlobal appGlobal = AppGlobal.single_instance;
+  _signUp() async {
 
     appGlobal.userEmail = person.email;
 
-    setState(() {
-      isLoading = true;
-    });
+    _setState(true);
 
     User usr = new User(email: person.email, name: person.name, hash: person.password);
     await authService.httpPost(usr, "/accounts/register")
@@ -198,56 +154,43 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
         logger.i('  statusCode:====>>>' + result.statusCode +
             '\n  statusMessage:=>>>' + result.statusMessage );
 
-        User user = new User();
-        user.name = result.name;
-        user.verify_code = result.verify_code;
-        user.email = result.email;
-//        user.user_id = result.user_id;
-//        user.confirmed = result.confirmed;
-        AppGlobal.single_instance.user = user;
         if(result.statusCode.startsWith('2')) { // 200, 201, ...
+          User user = new User();
+          user.name = result.name;
+          user.verify_code = result.verify_code;
+          user.email = result.email;
+          AppGlobal.single_instance.user = user;
           await authService.httpPost(user, "/accounts/send-register")
               .then((sendRes) async {
             if (sendRes != null) {
-              setState(() {
-                isLoading = false;
-                //show snackbar
-              });
-              logger.i('\n  sendRes:<<<=>>>' + sendRes.toString());
+              _setState(false);
               logger.i('sendRes  statusCode:====>>>' + sendRes.statusCode +
                   '\nsendRes  statusMessage:=>>>' + sendRes.statusMessage);
 
               if (sendRes.statusCode.startsWith('2')) { // 200, 201, ...
+                _setState(false);
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Confirm()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => Confirm()));
               } else {
-                showInSnackBarSignUp("Not valid!");
+                _setStateSnack();
               }
             } else {
-              setState(() {
-                isLoading = true;
-                //show snackbar
-              });
+              _setStateSnack();
             }
           });
+        } else {
+          _setStateSnack();
         }
       } else {
-        setState(() {
-          isLoading = true;
-          //show snackbar
-        });
+        _setStateSnack();
       }
     });
-    //}
   }
 
   @override
   Widget build(BuildContext context) {
     const sizedBoxSpace = SizedBox(height: 10);
-
     return Scaffold(
       body: isLoading
           ? Container(
@@ -261,9 +204,6 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
           child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
             padding: EdgeInsets.symmetric(horizontal: 16),
-            // decoration: BoxDecoration(
-            //     border: Border.all(color: Colors.green, width: 1.5),
-            //     borderRadius: BorderRadius.circular(8.0)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -272,30 +212,24 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
                     children: <Widget>[
                       Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
                       Image.asset("assets/images/NidmiLogoSign2Circle100X100.png",),
-                      //Image.asset("assets/images/NidmiLogoSign-109X150-blend.png"),
                     ]
                 ),
-                // Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
                 sizedBoxSpace,
                 TextFormField(
-                  //textCapitalization: TextCapitalization.words,
                   decoration: InputDecoration(
                     filled: true,
-                    // icon: const Icon(Icons.person),
                     hintText: "Enter Username",
-                    labelText:
-                    "Username",
+                    labelText: "Username",
                   ),
                   onSaved: (value) {
                     person.name = value;
                   },
-                  validator: _validateName,
+                  validator: _validateField.validateName,
                 ),
                 sizedBoxSpace,
                 TextFormField(
                   decoration: InputDecoration(
                     filled: true,
-                    // icon: const Icon(Icons.email),
                     hintText: "Enter valid email address",
                     labelText: "Email",
                   ),
@@ -303,39 +237,21 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
                   onSaved: (value) {
                     person.email = value;
                   },
-                  validator: _validateEmail,
+                  validator: _validateField.validateEmail,
                 ),
                 sizedBoxSpace,
                 PasswordField(
                   fieldKeySignUp: _passwordFieldKey,
-                  // helperText:
-                  // "Password",
-                  labelText:
-                  "Enter password",
-                  onFieldSubmitted: (value) {
-                    setState(() {
-                    });
-                  },
+                  labelText: "Enter password",
+                  validator: _validateField.validatePassword,
                   onSaved: (value) {
                     person.password = value;
-                    print('person.password:' + person.password);
                   },
-                ),
-                sizedBoxSpace,
-                TextFormField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    labelText: "Re-Enter Password",
-                  ),
-                  maxLength: 24,
-                  obscureText: true,
-                  validator: _validatePassword,
                 ),
                 sizedBoxSpace,
                 Center(
                   child: ElevatedButton(
-                    child: Text(
-                        "  Register  "),
+                    child: Text("  Register  "),
                     onPressed: _handleSubmittedSignUp,
                   ),
                 ),
@@ -343,8 +259,7 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Have an account? ",
+                    Text( "Have an account? ",
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.normal,
@@ -354,8 +269,7 @@ class TextFormFieldSignupState extends State<TextFormFieldSignup> {
                         ScaffoldMessenger.of(context).removeCurrentSnackBar();
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
                       },
-                      child: Text(
-                        "Sign In",
+                      child: Text( "Sign In",
                         style: TextStyle(
                             color: Colors.indigo[500],
                             fontWeight: FontWeight.bold,

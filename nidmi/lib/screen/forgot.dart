@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
-import 'package:nidmi/entity/User.dart';
-import 'package:nidmi/screen/reset.dart';
-import 'package:nidmi/screen/signin.dart';
-import 'package:nidmi/service/authSvc.dart';
-import 'package:nidmi/xinternal/AppGlobal.dart';
-
-//import 'package:gallery/l10n/gallery_localizations.dart';
-
+import '../entity/User.dart';
+import '../screen/reset.dart';
+import '../service/authSvc.dart';
+import '../util/validate.dart';
+import '../xinternal/AppGlobal.dart';
 
 class Forgot extends StatelessWidget {
   const Forgot();
@@ -58,14 +55,11 @@ class ForgotField extends StatefulWidget {
 }
 
 class _ForgotFieldState extends State<ForgotField> {
-//  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       key: widget.fieldKeyForgot,
-//      obscureText: _obscureText,
-//      maxLength: 6,
       onSaved: widget.onSaved,
       validator: widget.validator,
       onFieldSubmitted: widget.onFieldSubmitted,
@@ -91,52 +85,28 @@ class TextFormFieldForgotState extends State<TextFormFieldForgot> {
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
 
   final GlobalKey<FormState> _formKeyForgot = GlobalKey<FormState>();
-  final GlobalKey<FormFieldState<String>> _verifyFieldKey =
-  GlobalKey<FormFieldState<String>>();
 
   void _handleSubmittedForgot() {
     final formIn = _formKeyForgot.currentState;
     if (!formIn.validate()) {
-      _autoValidateMode =
-          AutovalidateMode.always; // Start validating on every change.
-      showInSnackBarForgot(
-        "One or more fields is not valid!",
-      );
+      _autoValidateMode = AutovalidateMode.always; // Start validating on every change.
+      showInSnackBarForgot("One or more fields is not valid!",);
     } else {
       formIn.save();
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      _Forgot();
+      _forgot();
     }
   }
-
-  String _validateEmail(String value) {
-    if (value.isEmpty) {
-      return "Email is empty!";
-    }
-    final mailExp = RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-    if (!mailExp.hasMatch(value)) {
-      return "Not a valid email!";
-    }
-    user.email = value;
-    return null;
-  }
-
-  AuthService authService = new AuthService();
-
-  var logger = Logger(
-    printer: PrettyPrinter(),
-  );
 
   bool isLoading = false;
-
+  ValidateField _validateField  = new ValidateField();
+  AuthService authService = new AuthService();
   AppGlobal appGlobal = new AppGlobal();
-
+  var logger = Logger(printer: PrettyPrinter(),);
   User user = AppGlobal().user;
 
-  _Forgot() async {
-    setState(() {
-      isLoading = true;
-    });
+  _forgot() async {
+    setState(() { isLoading = true; });
 
     logger.i('  email:===>>>'+user.email );
     await authService.httpPost(user, "/accounts/forgot-password")
@@ -149,45 +119,30 @@ class TextFormFieldForgotState extends State<TextFormFieldForgot> {
           user.name = result.name;
           user.verify_code = result.verify_code;
           user.email = result.email;
-//        user.user_id = result.user_id;
-//        user.confirmed = result.confirmed;
           AppGlobal.single_instance.user = user;
           await authService.httpPost(user, "/accounts/send-forgot")
               .then((sendRes) async {
             if (sendRes != null) {
-              setState(() {
-                isLoading = false;
-                //show snackbar
-              });
-              logger.i('\n  sendRes:<<<=>>>' + sendRes.toString());
+              setState(() {isLoading = false;});
               logger.i('sendRes  statusCode:====>>>' + sendRes.statusCode +
                   '\nsendRes  statusMessage:=>>>' + sendRes.statusMessage);
 
               if (sendRes.statusCode.startsWith('2')) { // 200, 201, ...
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Reset()));
+                Navigator.pushReplacement( context,
+                    MaterialPageRoute( builder: (context) => Reset()));
               } else {
                 showInSnackBarForgot("Sending verify code not succeeded!");
               }
             } else {
-              setState(() {
-                isLoading = true;
-                //show snackbar
-              });
+              setState(() {isLoading = true;});
             }
           });
         }
       } else {
-        setState(() {
-          isLoading = true;
-          //show snackbar
-        });
+        setState(() {isLoading = true;});
       }
     });
-    //}
   }
 
   @override
@@ -207,9 +162,6 @@ class TextFormFieldForgotState extends State<TextFormFieldForgot> {
           child: SingleChildScrollView(
             dragStartBehavior: DragStartBehavior.down,
             padding: EdgeInsets.symmetric(horizontal: 16),
-            // decoration: BoxDecoration(
-            //     border: Border.all(color: Colors.green, width: 1.5),
-            //     borderRadius: BorderRadius.circular(8.0)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -224,8 +176,7 @@ class TextFormFieldForgotState extends State<TextFormFieldForgot> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      "Confirm email for resetting password",
+                    Text("Confirm email for resetting password",
                       style: TextStyle(
                           color: Colors.deepOrange[500],
                           fontWeight: FontWeight.normal,
@@ -237,7 +188,6 @@ class TextFormFieldForgotState extends State<TextFormFieldForgot> {
                 TextFormField(
                   decoration: InputDecoration(
                     filled: true,
-                    // icon: const Icon(Icons.email),
                     hintText: "Enter valid email address",
                     labelText: "Email",
                   ),
@@ -246,13 +196,12 @@ class TextFormFieldForgotState extends State<TextFormFieldForgot> {
                   onSaved: (value) {
                     user.email = value;
                   },
-                  validator: _validateEmail,
+                  validator: _validateField.validateEmail,
                 ),
                 sizedBoxSpace,
                 Center(
                   child: ElevatedButton(
-                    child: Text(
-                        "  Forgot  "),
+                    child: Text("  Forgot  "),
                     onPressed: _handleSubmittedForgot,
                   ),
                 ),
