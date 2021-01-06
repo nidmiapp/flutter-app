@@ -34,6 +34,9 @@ class Splash extends StatelessWidget {
             '\n  isUserExpiredSharedPreference:==>>>'+ (isUserExpiredSharedPreference.toString() == null ? 'null' : isUserExpiredSharedPreference).toString()
     );
 
+    List<String> deviceInfo = await AppGlobal.getDeviceDetails();
+    print('<<<<<<<<<<<<deviceInfo>>>>>>>>>>');
+    print(deviceInfo);
     print(" This line is execute before Timer");
 
     Timer(Duration(seconds: 5), () {

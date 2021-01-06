@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nidmi/entity/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
@@ -178,28 +182,74 @@ class AppGlobal {
     return preferences.getString(sharedPreferenceRefreshKey);
   }
 
-  changeAppThemeColor(int option) {
+  static Future<List<String>> getDeviceDetails() async {
+    String deviceName;
+    String deviceVersion;
+    String identifier;
+    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        deviceName = build.model;
+        deviceVersion = build.version.toString();
+        identifier = build.androidId;  //UUID for Android
+      } else if (Platform.isIOS) {
+        var data = await deviceInfoPlugin.iosInfo;
+        deviceName = data.name;
+        deviceVersion = data.systemVersion;
+        identifier = data.identifierForVendor;  //UUID for iOS
+      }
+    } on PlatformException {
+      print('Failed to get platform version');
+    }
+
+    return [deviceName, deviceVersion, identifier];
+  }
+
+  static Future<String> getDeviceUUID() async {
+    String identifier;
+    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        identifier = build.androidId;  //UUID for Android
+      } else if (Platform.isIOS) {
+        var data = await deviceInfoPlugin.iosInfo;
+        identifier = data.identifierForVendor;  //UUID for iOS
+      }
+    } on PlatformException {
+      print('Failed to get platform version');
+    }
+
+    return identifier;
+  }
+
+
+  ThemeData changeAppThemeColor(int option) {
     switch(option) {
       case 0:
         appThemeData = new ThemeData(
           brightness:Brightness.light,
           primarySwatch: Colors.indigo,
-          primaryColor: const Color(0xFF212121),
+          primaryColor: const Color(0xFFFFFFFF),
           accentColor: const Color(0xFF64ffda),
-          canvasColor: const Color(0xFF303030),
+          canvasColor: const Color(0xFFFFFFFF),
+          visualDensity: VisualDensity.adaptivePlatformDensity,
           fontFamily: 'Roboto',
         );
         break;
       case 1:
         appThemeData = new ThemeData(
           brightness:Brightness.dark,
-          primarySwatch: Colors.indigo,
+          primarySwatch: Colors.green,
           primaryColor: const Color(0xFF212121),
           accentColor: const Color(0xFF64ffda),
           canvasColor: const Color(0xFF303030),
+          visualDensity: VisualDensity.adaptivePlatformDensity,
           fontFamily: 'Roboto',
         );
         break;
     }
+    return appThemeData;
   }
 }
