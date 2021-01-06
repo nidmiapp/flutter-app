@@ -32,7 +32,8 @@
 /build/
 
 # App related
-/assets/config/*
+dev.json
+prod.json
 
 # Web related
 lib/generated_plugin_registrant.dart
