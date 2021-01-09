@@ -6,5 +6,6 @@
   "baseUrlChat"   : "https://api.nidmi.net:2506",
   "baseUrlPayment": "https://api.nidmi.net:2507",
   "baseUrlReview" : "https://api.nidmi.net:2508",
+  "baseUrlDevice" : "https://api.nidmi.net:2509",
   "baseUrlUtil"   : "https://api.nidmi.net:2555"
 }

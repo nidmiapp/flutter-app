@@ -4,27 +4,27 @@ import 'app_config.dart';
 import 'xinternal/AppGlobal.dart';
 
 
-Future<void> main(List<String> arg) async {
-  String env;
+Future<void> main(/*List<String> arg*/) async {
+/*  String env;
   if(arg.length>0) {
     env = arg.elementAt(0);
     print('====>>>>>env: '+env);
   }
-
+*/
   WidgetsFlutterBinding.ensureInitialized();
 
   AppGlobal appGlobal=AppGlobal.single_instance;
   AppConfig appConfig=AppConfig.single_instance;
 
-  print(appConfig.hashCode);
-  print(appGlobal.hashCode);
-  //AppConfig appConfig = new AppConfig();
+  // print(appConfig.hashCode);
+  // print(appGlobal.hashCode);
+
   appConfig.setEnv('dev');
   await appConfig.forEnvironment();
-  await appGlobal.configToAppGlobal();
+  appGlobal.configToAppGlobal();
 
-  print( appConfig.hashCode.toString());
-  print(appGlobal.hashCode.toString());
+  // print( appConfig.hashCode.toString());
+  // print(appGlobal.hashCode.toString());
 
 //  HttpOverrides.global = new MyHttpOverrides();
 

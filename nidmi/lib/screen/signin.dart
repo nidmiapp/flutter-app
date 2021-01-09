@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
+import 'package:nidmi/entity/Device.dart';
+import 'package:nidmi/service/deviceSvc.dart';
 
 import '../screen/forgot.dart';
 import '../screen/register.dart';
@@ -125,6 +127,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
   bool isLoading = false;
   ValidateField _validateField = new ValidateField();
   AuthService authService = new AuthService();
+  DeviceService deviceService = new DeviceService();
   var logger = Logger(printer: PrettyPrinter(),);
 
   _signIn() async {
@@ -138,6 +141,12 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
         setState(() {isLoading = false;});
 
         if(result.code.compareTo('200') == 0) {
+          Device dvc = new Device();
+          dvc.owner_id = result.user_id;
+          dvc.device_unique_id = await AppGlobal.getDeviceUUID();
+          dvc.device_type = await AppGlobal.getDeviceType();
+          dvc.token = result.refresh_token;
+          dvc.activated = true;
           logger.i(
               '\n  response:=>>>'+result.response+
                   '\n  code:=====>>>'+result.code+
@@ -147,16 +156,38 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                   '\n  refresh_token:>>>'+result.refresh_token+
                   '\n  access_token:=>>>'+result.access_token+
                   '\n  expires_at:===>>>'+result.expires_at+
-                  '\n  user_id:===>>>'+result.user_id.toString()
+                  '\n  user_id:===>>>'+result.user_id.toString()+
+                  '\n  device_unique_id:===>>>'+dvc.device_unique_id+
+                  '\n  token:===>>>'+dvc.token+
+                  '\n  device_type:===>>>'+dvc.device_type
           );
-          AppGlobal.saveUserAccessSharedPreference(result.access_token);
-          AppGlobal.saveUserRefreshSharedPreference(result.refresh_token);
-          AppGlobal.saveUserNameSharedPreference(result.display_name);
-          AppGlobal.saveUserEmailSharedPreference(result.email);
-          AppGlobal.saveUserExpiredSharedPreference(result.expires_at.toString());
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash(context)));
+          await AppGlobal.saveUserAccessSharedPreference(result.access_token);
+          await AppGlobal.saveUserRefreshSharedPreference(result.refresh_token);
+          await AppGlobal.saveUserNameSharedPreference(result.display_name);
+          await AppGlobal.saveUserEmailSharedPreference(result.email);
+          await AppGlobal.saveUserExpiredSharedPreference(result.expires_at.toString());
+          print('############### dvc.toString() ###########'+dvc.toString());
+          await deviceService.httpPost(dvc, "/device")
+              .then((rslt) async {
+            if (rslt != null) {
+              setState(() {
+                isLoading = false;
+              });
+              if (rslt.statusCode.startsWith('2')) { // 200, 201, ...
+                logger.i('  device_unique_id:=>>>'+rslt.device_unique_id +
+                    '\n  device_type:==========>>>'+ rslt.device_type +
+                    '\n  status:========>>>'+ rslt.statusCode);
+                AppGlobal.saveDeviceUUidSharedPreference(rslt.device_unique_id);
+                AppGlobal.saveDeviceTypeSharedPreference(rslt.device_type);
+              }
+            } else {
+              showInSnackBarSignIn("Login succeeded, but device not registered!");
+              print('==============device info service failed=============');
+              setState(() {isLoading = false;});
+            }
+          });
         } else {
-          showInSnackBarSignIn("Not valid!");
+          showInSnackBarSignIn("Login failed, Try again!");
           logger.i('  LoginResponse:=>>>'+result.response +
               '\n  code:==========>>>'+ result.code +
               '\n  status:========>>>'+ result.status);
@@ -165,8 +196,11 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
           AppGlobal.saveUserNameSharedPreference('');
           AppGlobal.saveUserEmailSharedPreference('');
           AppGlobal.saveUserExpiredSharedPreference('');
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash(context)));
+          AppGlobal.saveDeviceUUidSharedPreference('');
+          AppGlobal.saveDeviceTypeSharedPreference('');
         }
+
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash(context)));
 
         logger.i(
             '\n  getUserNameSharedPreference:====>>>'+ await AppGlobal.getUserNameSharedPreference()+
@@ -174,10 +208,14 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                 '\n  getUserAccessSharedPreference:==>>>'+ await AppGlobal.getUserAccessSharedPreference()+
                 '\n  getUserRefreshSharedPreference:=>>>'+ await AppGlobal.getUserRefreshSharedPreference()+
                 '\n  getUserExpiredSharedPreference:=>>>'+ await AppGlobal.getUserExpiredSharedPreference()+
+                '\n  getDeviceUUidSharedPreference:=>>>'+ await AppGlobal.getDeviceUUidSharedPreference()+
+                '\n  getDeviceTypeSharedPreference:=>>>'+ await AppGlobal.getDeviceTypeSharedPreference()+
                 '\n  isUserExpiredSharedPreference:==>>>'+ AppGlobal.isUserExpiredSharedPreference().toString()
         );
       } else {
-        setState(() {isLoading = true;});
+        showInSnackBarSignIn("Login failed, Try again!");
+        print('==============login failed=============');
+        setState(() {isLoading = false;});
       }
     });
   }
@@ -226,10 +264,8 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                 PasswordField(
                   fieldKeySignIn: _passwordFieldKey,
                   labelText: "Enter password",
-                  onFieldSubmitted: (value) {
-                    setState(() {
-                      person.password = value;
-                    });
+                  onSaved: (value) {
+                    person.password = value;
                   },
                   validator: _validateField.validatePassword,
                 ),

@@ -11,10 +11,11 @@ class AppConfig {
   static String baseUrlChat;
   static String baseUrlPayment;
   static String baseUrlReview;
+  static String baseUrlDevice;
   static String baseUrlUtil;
-  static String apiKey;
-  static String secretKey;
-  static String cipherKey;
+  static String apiKey = "mYq3t6w9z\$C&F)H@McQfTjWnZr4u7x!A%D*G-KaNdRgUkXp2s5v8y/B?E(H+MbQe";
+  static String secretKey = "n!dm!-@\$\$-s3cr3t";
+  static String cipherKey = "NidmiShah1970!@#\$%^&*()_+";
 
   static String ENVIRONMENT;
   // ignore: non_constant_identifier_names
@@ -29,7 +30,7 @@ class AppConfig {
     return _single_instance;
   }
   
-  factory AppConfig({baseUrlAuth, baseUrlAccInfo, baseUrlRequest, baseUrlReply, baseUrlChat, baseUrlPayment, baseUrlReview, baseUrlUtil, apiKey, secretKey, cipherKey}) {
+  factory AppConfig({baseUrlAuth, baseUrlAccInfo, baseUrlRequest, baseUrlReply, baseUrlChat, baseUrlPayment, baseUrlReview, baseUrlDevice, baseUrlUtil}) {
     return _single_instance;
   }
 
@@ -65,10 +66,11 @@ class AppConfig {
     baseUrlChat = json['baseUrlChat'].toString();
     baseUrlPayment = json['baseUrlPayment'].toString();
     baseUrlReview = json['baseUrlReview'].toString();
+    baseUrlDevice = json['baseUrlDevice'].toString();
     baseUrlUtil = json['baseUrlUtil'].toString();
-    apiKey = json['apiKey'].toString();
-    secretKey = json['secretKey'].toString();
-    cipherKey = json['cipherKey'].toString();
+    // apiKey = json['apiKey'].toString();
+    // secretKey = json['secretKey'].toString();
+    // cipherKey = json['cipherKey'].toString();
 
     print("json[\'baseUrlAuth\'] "+json['baseUrlAuth']);
     print("baseUrlAuth "+baseUrlAuth);
@@ -81,10 +83,8 @@ class AppConfig {
         baseUrlChat: json['baseUrlChat'],
         baseUrlPayment: json['baseUrlPayment'],
         baseUrlReview: json['baseUrlReview'],
-        baseUrlUtil: json['baseUrlUtil'],
-        apiKey: json['apiKey'],
-        secretKey: json['secretKey'],
-        cipherKey: json['cipherKey']
+      baseUrlDevice: json['baseUrlDevice'],
+      baseUrlUtil: json['baseUrlUtil']
     );
   }
 }

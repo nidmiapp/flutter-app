@@ -1,11 +1,11 @@
 import 'dart:io';
-
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nidmi/entity/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
+
+import '../entity/User.dart';
 import '../app_config.dart';
 
 class AppGlobal {
@@ -39,6 +39,7 @@ class AppGlobal {
   static String baseUrlChat;
   static String baseUrlPayment;
   static String baseUrlReview;
+  static String baseUrlDevice;
   static String baseUrlUtil;
   static String apiKey;
   static String secretKey;
@@ -49,6 +50,8 @@ class AppGlobal {
   static String sharedPreferenceUserEmailKey = "USEREMAILKEY";
   static String sharedPreferenceAccessKey = "ACCESSKEY";
   static String sharedPreferenceRefreshKey = "REFRESHKEY";
+  static String sharedPreferenceDeviceUUID = "DEVICEUUID";
+  static String sharedPreferenceDeviceType = "DEVICETYPE";
 
   static ThemeData appThemeData = new ThemeData();
 
@@ -67,6 +70,7 @@ class AppGlobal {
     baseUrlChat,
     baseUrlPayment,
     baseUrlReview,
+    baseUrlDevice,
     baseUrlUtil,
     apiKey,
     secretKey,
@@ -81,8 +85,8 @@ class AppGlobal {
     return _single_instance;
   }
 
-  Future<AppGlobal> configToAppGlobal() async {
-    await appConfig.forEnvironment();
+  AppGlobal configToAppGlobal() /* async */{
+//    await appConfig.forEnvironment();
     baseUrlAuth   = AppConfig.baseUrlAuth;
     baseUrlAccInfo= AppConfig.baseUrlAccInfo;
     baseUrlRequest= AppConfig.baseUrlRequest;
@@ -90,6 +94,7 @@ class AppGlobal {
     baseUrlChat   = AppConfig.baseUrlChat;
     baseUrlPayment= AppConfig.baseUrlPayment;
     baseUrlReview = AppConfig.baseUrlReview;
+    baseUrlDevice = AppConfig.baseUrlDevice;
     baseUrlUtil   = AppConfig.baseUrlUtil;
     apiKey = AppConfig.apiKey;
     secretKey = AppConfig.secretKey;
@@ -100,17 +105,18 @@ class AppGlobal {
     print(cipherKey);
     print(AppGlobal().hashCode.toString());
     return new AppGlobal(
-      baseUrlAuth: baseUrlAuth,
-      baseUrlAccInfo: baseUrlAccInfo,
-      baseUrlRequest: baseUrlRequest,
-      baseUrlReply: baseUrlReply,
-      baseUrlChat: baseUrlChat,
-      baseUrlPayment: baseUrlPayment,
-      baseUrlReview: baseUrlReview,
-      baseUrlUtil: baseUrlUtil,
-      apiKey: apiKey,
-      secretKey: secretKey,
-      cipherKey: cipherKey
+        baseUrlAuth: baseUrlAuth,
+        baseUrlAccInfo: baseUrlAccInfo,
+        baseUrlRequest: baseUrlRequest,
+        baseUrlReply: baseUrlReply,
+        baseUrlChat: baseUrlChat,
+        baseUrlPayment: baseUrlPayment,
+        baseUrlReview: baseUrlReview,
+        baseUrlDevice: baseUrlDevice,
+        baseUrlUtil: baseUrlUtil,
+        apiKey: apiKey,
+        secretKey: secretKey,
+        cipherKey: cipherKey
     );
   }
 
@@ -138,6 +144,16 @@ class AppGlobal {
   static Future<bool> saveUserRefreshSharedPreference(String refresh) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.setString(sharedPreferenceRefreshKey, refresh);
+  }
+
+  static Future<bool> saveDeviceUUidSharedPreference(String devuuid) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return await preferences.setString(sharedPreferenceDeviceUUID, devuuid);
+  }
+
+  static Future<bool> saveDeviceTypeSharedPreference(String devtype) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return await preferences.setString(sharedPreferenceDeviceType, devtype);
   }
 
   /// fetching data from sharedpreference
@@ -182,8 +198,19 @@ class AppGlobal {
     return preferences.getString(sharedPreferenceRefreshKey);
   }
 
+  static Future<String> getDeviceUUidSharedPreference() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(sharedPreferenceDeviceUUID);
+  }
+
+  static Future<String> getDeviceTypeSharedPreference() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(sharedPreferenceDeviceType);
+  }
+
   static Future<List<String>> getDeviceDetails() async {
     String deviceName;
+    String deviceType;
     String deviceVersion;
     String identifier;
     final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
@@ -193,35 +220,50 @@ class AppGlobal {
         deviceName = build.model;
         deviceVersion = build.version.toString();
         identifier = build.androidId;  //UUID for Android
+        deviceType = "ANDROID";
       } else if (Platform.isIOS) {
         var data = await deviceInfoPlugin.iosInfo;
         deviceName = data.name;
         deviceVersion = data.systemVersion;
         identifier = data.identifierForVendor;  //UUID for iOS
+        deviceType = "IOS";
       }
     } on PlatformException {
       print('Failed to get platform version');
     }
 
-    return [deviceName, deviceVersion, identifier];
+    return [deviceName, deviceVersion, identifier, deviceType];
+  }
+
+  static Future<String> getDeviceType() async {
+    try {
+      if (Platform.isAndroid) {
+        return "ANDROID";
+      } else if (Platform.isIOS) {
+        return "IOS";
+      }
+    } on PlatformException {
+      print('Failed to get platform version');
+    }
+
+    return null;
   }
 
   static Future<String> getDeviceUUID() async {
-    String identifier;
     final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
     try {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
-        identifier = build.androidId;  //UUID for Android
+        return build.androidId;  //UUID for Android
       } else if (Platform.isIOS) {
         var data = await deviceInfoPlugin.iosInfo;
-        identifier = data.identifierForVendor;  //UUID for iOS
+        return data.identifierForVendor;  //UUID for iOS
       }
     } on PlatformException {
       print('Failed to get platform version');
     }
 
-    return identifier;
+    return null;
   }
 
 

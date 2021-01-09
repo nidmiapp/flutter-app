@@ -3,18 +3,23 @@ import 'dart:io';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import '../entity/User.dart';
-import '../xinternal/UserResponse.dart';
+import '../entity/Device.dart';
+import '../xinternal/DeviceResponse.dart';
 import '../xinternal/AppGlobal.dart';
 import '../xinternal/LoginResponse.dart';
 
-class AuthService {
+class DeviceService {
 
   var logger = Logger(printer: PrettyPrinter(),);
   AppGlobal appGlobal = AppGlobal.single_instance;
   final Dio _dio = new Dio();
+  static String bearer;
 
-  AuthService(){
+  // Future<void> getBearer() async {
+  //   bearer = await AppGlobal.getUserAccessSharedPreference();
+  // }
+
+  DeviceService() {
     (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
         (HttpClient client) {
       client.badCertificateCallback =
@@ -23,44 +28,18 @@ class AuthService {
     };
   }
 
-  Future<LoginResponse> login(String email, String password) async {
-
-    LoginResponse lr = new LoginResponse();
-    try {
-      var response = await _dio.post(
-          AppGlobal.baseUrlAuth + "/auth/login",
-          data: {
-            "email": email,
-            "hash": password
-          },
-          options: httpOptions()
-      ).timeout(Duration(seconds: AppGlobal.secTimeOut));
-
-      print('login response.toString(): '+response.toString());
-
-      print(response.statusCode);
-      print(response.data);
-      var responseData = response.data;
-      return LoginResponse.fromJson(responseData);
-    } on DioError catch (e) {
-      lr.status = e.message;
-      lr.code = e.error.toString();
-      print(e);
-      print(lr.status);
-      print(lr.code);
-    }
-  }
-
-  Future<UserResponse> httpPost(User user, String url) async {
-    String endpoint = AppGlobal.baseUrlAuth + url;
-    UserResponse usr = new UserResponse();
+  Future<DeviceResponse> httpPost(Device device, String url) async {
+    bearer = await AppGlobal.getUserAccessSharedPreference();
+    String endpoint = AppGlobal.baseUrlDevice + url;
+    DeviceResponse usr = new DeviceResponse();
     try {
       var response = await _dio.post(
           "$endpoint",
-          data: dataRequest(user),
+          data: dataRequest(device),
           options: httpOptions()
       ).timeout(Duration(seconds: AppGlobal.secTimeOut));
-      return extractUserResponse(response);
+
+      return extractDeviceResponse(response);
     } on HttpException catch (e) {
       usr.statusMessage = e.message;
       usr.statusCode = '400';
@@ -92,29 +71,39 @@ class AuthService {
     }
   }
 
-  dynamic dataRequest(User user) {
+  dynamic dataRequest(Device device) {
     return ({
-      "name": user.name,
-      "email": user.email,
-      "hash": user.hash,
-      "verify_code": user.verify_code
+      "owner_id": device.owner_id,
+      "device_unique_id": device.device_unique_id,
+      "token": device.token,
+      "device_type": device.device_type,
+      "activated": device.activated
     });
   }
 
   Options httpOptions() {
+    print('%%%%%%%%%% bearer ##########: ' + bearer);
     return new Options(headers: {
       "content-type": "application/json",
-      "x-api-key": AppGlobal.apiKey
+      "x-api-key": AppGlobal.apiKey,
+      "Authorization" : "bearer "+ bearer
     });
   }
 
-  UserResponse extractUserResponse(dynamic response){
-    print('httpPost response.toString(): '+response.toString());
+  DeviceResponse extractDeviceResponse(dynamic response){
     var responseData = response.data;
-    UserResponse usr = UserResponse.fromJson(responseData);
+    DeviceResponse usr = DeviceResponse.fromJson(responseData);
     usr.statusCode = response.statusCode.toString();
     usr.statusMessage = response.statusMessage;
-    print('usr.toString(): '+usr.toString());
+    return usr;
+  }
+
+  dynamic exceptionError(dynamic e, dynamic usr) {
+    usr.statusMessage = e.message;
+    usr.statusCode = e.error.toString();
+    print(e);
+    print(usr.statusMessage);
+    print(usr.statusCode);
     return usr;
   }
 

@@ -23,6 +23,8 @@ class Splash extends StatelessWidget {
     var getUserAccessSharedPreference = await AppGlobal.getUserAccessSharedPreference();
     var getUserRefreshSharedPreference = await AppGlobal.getUserRefreshSharedPreference();
     var getUserExpiredSharedPreference = await AppGlobal.getUserExpiredSharedPreference();
+    var getDeviceUUidSharedPreference = await AppGlobal.getDeviceUUidSharedPreference();
+    var getDeviceTypeSharedPreference = await AppGlobal.getDeviceTypeSharedPreference();
     var isUserExpiredSharedPreference = await AppGlobal.isUserExpiredSharedPreference();
 
     logger.i(
@@ -31,22 +33,24 @@ class Splash extends StatelessWidget {
             '\n  getUserAccessSharedPreference:==>>>'+ (getUserAccessSharedPreference == null ? 'null' : getUserAccessSharedPreference)+
             '\n  getUserRefreshSharedPreference:=>>>'+ (getUserRefreshSharedPreference == null ? 'null' : getUserRefreshSharedPreference)+
             '\n  getUserExpiredSharedPreference:=>>>'+ (getUserExpiredSharedPreference == null ? 'null' : getUserExpiredSharedPreference)+
+            '\n  getDeviceUUidSharedPreference:=>>>'+ (getDeviceUUidSharedPreference == null ? 'null' : getDeviceUUidSharedPreference)+
+            '\n  getDeviceTypeSharedPreference:=>>>'+ (getDeviceTypeSharedPreference == null ? 'null' : getDeviceTypeSharedPreference)+
             '\n  isUserExpiredSharedPreference:==>>>'+ (isUserExpiredSharedPreference.toString() == null ? 'null' : isUserExpiredSharedPreference).toString()
     );
 
-    List<String> deviceInfo = await AppGlobal.getDeviceDetails();
-    print('<<<<<<<<<<<<deviceInfo>>>>>>>>>>');
-    print(deviceInfo);
-    print(" This line is execute before Timer");
+    // List<String> deviceInfo = await AppGlobal.getDeviceDetails();
+    // print('<<<<<<<<<<<<deviceInfo>>>>>>>>>>');
+    // print(deviceInfo);
+    // print(" This line is execute before Timer");
 
-    Timer(Duration(seconds: 5), () {
-      print(" This line is execute after 5 seconds");
-      if(isUserExpiredSharedPreference) {
-        print(" Call Login Page");
-      } else {
-        print(" Call Lead Page if there is. if not go to ....");
-      }
-    });
+    // Timer(Duration(seconds: 5), () {
+    //   print(" This line is execute after 5 seconds");
+    //   if(isUserExpiredSharedPreference) {
+    //     print(" Call Login Page");
+    //   } else {
+    //     print(" Call Lead Page if there is. if not go to ....");
+    //   }
+    // });
   }
 
   @override
