@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
 
-import '../entity/User.dart';
-import '../screen/signin.dart';
-import '../service/authSvc.dart';
-import '../util/validate.dart';
-import '../xinternal/AppGlobal.dart';
+import '../../entity/User.dart';
+import 'signin.dart';
+import '../../service/authSvc.dart';
+import '../../util/validate.dart';
+import '../../xinternal/AppGlobal.dart';
 
 class Reset extends StatelessWidget {
   const Reset();
@@ -190,7 +190,7 @@ class TextFormFieldResetState extends State<TextFormFieldReset> {
                   children: [
                     Text("Verification code has been sent to your email",
                       style: TextStyle(
-                          color: Colors.deepOrange[500],
+                        //  color: Colors.deepOrange[500],
                           fontWeight: FontWeight.normal,
                           fontSize: 13),
                     ),

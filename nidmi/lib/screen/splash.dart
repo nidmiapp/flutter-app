@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import '../screen/signin.dart';
+import 'auth/signin.dart';
 import '../xinternal/AppGlobal.dart';
 
 // ignore: must_be_immutable

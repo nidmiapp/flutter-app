@@ -2,11 +2,18 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nidmi/util/nidmi_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 
 import '../entity/User.dart';
 import '../app_config.dart';
+
+
+enum EnumNidmiTheme {
+  Light,
+  Dark
+}
 
 class AppGlobal {
 
@@ -266,32 +273,7 @@ class AppGlobal {
     return null;
   }
 
-
-  ThemeData changeAppThemeColor(int option) {
-    switch(option) {
-      case 0:
-        appThemeData = new ThemeData(
-          brightness:Brightness.light,
-          primarySwatch: Colors.indigo,
-          primaryColor: const Color(0xFFFFFFFF),
-          accentColor: const Color(0xFF64ffda),
-          canvasColor: const Color(0xFFFFFFFF),
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          fontFamily: 'Roboto',
-        );
-        break;
-      case 1:
-        appThemeData = new ThemeData(
-          brightness:Brightness.dark,
-          primarySwatch: Colors.green,
-          primaryColor: const Color(0xFF212121),
-          accentColor: const Color(0xFF64ffda),
-          canvasColor: const Color(0xFF303030),
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          fontFamily: 'Roboto',
-        );
-        break;
-    }
-    return appThemeData;
+  ThemeData changeAppThemeColor( EnumNidmiTheme option) {
+    return getSelectedTheme(option);
   }
 }

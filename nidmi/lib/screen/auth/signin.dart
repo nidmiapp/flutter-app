@@ -5,12 +5,13 @@ import 'package:logger/logger.dart';
 import 'package:nidmi/entity/Device.dart';
 import 'package:nidmi/service/deviceSvc.dart';
 
-import '../screen/forgot.dart';
-import '../screen/register.dart';
-import '../screen/splash.dart';
-import '../service/authSvc.dart';
-import '../util/validate.dart';
-import '../xinternal/AppGlobal.dart';
+import '../../main_screen.dart';
+import 'forgot.dart';
+import 'register.dart';
+//import '../splash.dart';
+import '../../service/authSvc.dart';
+import '../../util/validate.dart';
+import '../../xinternal/AppGlobal.dart';
 
 class SignIn extends StatelessWidget {
   const SignIn();
@@ -200,7 +201,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
           AppGlobal.saveDeviceTypeSharedPreference('');
         }
 
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash(context)));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen()));
 
         logger.i(
             '\n  getUserNameSharedPreference:====>>>'+ await AppGlobal.getUserNameSharedPreference()+
@@ -280,7 +281,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                       },
                       child: Text("Forgot Password",
                         style: TextStyle(
-                            color: Colors.blue,
+                          //  color: Colors.blue,
                             fontSize: 16,
                             decoration: TextDecoration.underline),
                       ),
@@ -299,7 +300,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Have not an account? ",
-                      style: TextStyle(decorationColor: Colors.deepOrange, color: Colors.black, fontSize: 16),
+//                      style: TextStyle(decorationColor: Colors.deepOrange, color: Colors.black, fontSize: 16),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -308,7 +309,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
                       },
                       child: Text("ًRegister",
                         style: TextStyle(
-                            color: Colors.blue,
+//                            color: Colors.blue,
                             fontSize: 16,
                             decoration: TextDecoration.underline),
                       ),

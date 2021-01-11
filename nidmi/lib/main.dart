@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
-        theme: AppGlobal().changeAppThemeColor(0),
+        theme: AppGlobal().changeAppThemeColor(EnumNidmiTheme.Light),
         home: Splash(context)
     );
   }

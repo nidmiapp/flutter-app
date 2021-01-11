@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
-import '../entity/User.dart';
-import '../screen/reset.dart';
-import '../service/authSvc.dart';
-import '../util/validate.dart';
-import '../xinternal/AppGlobal.dart';
+import '../../entity/User.dart';
+import 'reset.dart';
+import '../../service/authSvc.dart';
+import '../../util/validate.dart';
+import '../../xinternal/AppGlobal.dart';
 
 class Forgot extends StatelessWidget {
   const Forgot();
@@ -178,7 +178,7 @@ class TextFormFieldForgotState extends State<TextFormFieldForgot> {
                   children: [
                     Text("Confirm email for resetting password",
                       style: TextStyle(
-                          color: Colors.deepOrange[500],
+                       //   color: Colors.deepOrange[500],
                           fontWeight: FontWeight.normal,
                           fontSize: 13),
                     ),
