@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:nidmi/screen/request/lead_screen.dart';
 
 class MainScreen extends StatelessWidget {
   static const String _title = 'Flutter Code Sample';
@@ -128,14 +129,14 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
             onPressed: () {},
           ),
       ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
+      body:
+        _buildBody(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.request_quote),
             label: 'Leads',
+
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
@@ -157,4 +158,13 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
       ),
     );
   }
+
+  Widget _buildBody(int item) {
+    print('item: '+item.toString());
+    switch(item) {
+      case 0: return LeadScreen();
+    }
+
+  }
+
 }

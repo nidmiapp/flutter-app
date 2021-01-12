@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nidmi/util/nidmi_theme.dart';
+import '../util/nidmi_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
-
+import 'package:geolocator/geolocator.dart';
 import '../entity/User.dart';
 import '../app_config.dart';
 
@@ -38,6 +38,11 @@ class AppGlobal {
   String get userEmail => _userEmail;
   // ignore: unnecessary_getters_setters
   set userEmail(String value) { _userEmail = value; }
+
+  Position position;
+
+  static double officeLat;
+  static double officeLong;
 
   static String baseUrlAuth;
   static String baseUrlAccInfo;
@@ -92,8 +97,13 @@ class AppGlobal {
     return _single_instance;
   }
 
-  AppGlobal configToAppGlobal() /* async */{
-//    await appConfig.forEnvironment();
+  Future<AppGlobal> configToAppGlobal() async{
+    await getPreferences();
+    position = await _determinePosition();
+    officeLat = position.latitude;
+    officeLong = position.longitude;
+    print('officeLat: ' + officeLat.toString());
+    print('officeLong: '+ officeLong.toString());
     baseUrlAuth   = AppConfig.baseUrlAuth;
     baseUrlAccInfo= AppConfig.baseUrlAccInfo;
     baseUrlRequest= AppConfig.baseUrlRequest;
@@ -127,46 +137,44 @@ class AppGlobal {
     );
   }
 
+  static SharedPreferences preferences;
+
+  Future<SharedPreferences> getPreferences() async {
+    preferences = await SharedPreferences.getInstance();
+  }
+
   /// saving data to sharedpreference
   static Future<bool> saveUserExpiredSharedPreference(String expiryDate) async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.setString(sharedPreferenceUserExpiry, expiryDate);
   }
 
   static Future<bool> saveUserNameSharedPreference(String userName) async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.setString(sharedPreferenceUserNameKey, userName);
   }
 
   static Future<bool> saveUserEmailSharedPreference(String userEmail) async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.setString(sharedPreferenceUserEmailKey, userEmail);
   }
 
   static Future<bool> saveUserAccessSharedPreference(String access) async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.setString(sharedPreferenceAccessKey, access);
   }
 
   static Future<bool> saveUserRefreshSharedPreference(String refresh) async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.setString(sharedPreferenceRefreshKey, refresh);
   }
 
   static Future<bool> saveDeviceUUidSharedPreference(String devuuid) async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.setString(sharedPreferenceDeviceUUID, devuuid);
   }
 
   static Future<bool> saveDeviceTypeSharedPreference(String devtype) async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.setString(sharedPreferenceDeviceType, devtype);
   }
 
   /// fetching data from sharedpreference
 
-  static Future<bool> isUserExpiredSharedPreference() async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+  static bool isUserExpiredSharedPreference() {
     String userExp = preferences.getString(sharedPreferenceUserExpiry);
 
     if(userExp==null)
@@ -179,39 +187,31 @@ class AppGlobal {
     return now.toIso8601String().compareTo(userExp) > 0 ;
   }
 
-  static Future<String> getUserExpiredSharedPreference() async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String userExp = preferences.getString(sharedPreferenceUserExpiry);
-    return userExp;
+  static String getUserExpiredSharedPreference() {
+    return preferences.getString(sharedPreferenceUserExpiry);
   }
 
-  static Future<String> getUserNameSharedPreference() async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+  static String getUserNameSharedPreference() {
     return preferences.getString(sharedPreferenceUserNameKey);
   }
 
-  static Future<String> getUserEmailSharedPreference() async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+  static String getUserEmailSharedPreference() {
     return preferences.getString(sharedPreferenceUserEmailKey);
   }
 
-  static Future<String> getUserAccessSharedPreference() async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+  static String getUserAccessSharedPreference() {
     return preferences.getString(sharedPreferenceAccessKey);
   }
 
-  static Future<String> getUserRefreshSharedPreference() async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+  static String getUserRefreshSharedPreference() {
     return preferences.getString(sharedPreferenceRefreshKey);
   }
 
-  static Future<String> getDeviceUUidSharedPreference() async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+  static String getDeviceUUidSharedPreference() {
     return preferences.getString(sharedPreferenceDeviceUUID);
   }
 
-  static Future<String> getDeviceTypeSharedPreference() async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+  static String getDeviceTypeSharedPreference() {
     return preferences.getString(sharedPreferenceDeviceType);
   }
 
@@ -276,4 +276,36 @@ class AppGlobal {
   ThemeData changeAppThemeColor( EnumNidmiTheme option) {
     return getSelectedTheme(option);
   }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permantly denied, we cannot request permissions.');
+    }
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        return Future.error(
+            'Location permissions are denied (actual value: $permission).');
+      }
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  double distanceInMeters(double latStart, double longStart, double latEnd, double longEnd) {
+   return Geolocator.distanceBetween(latStart, longStart, latEnd, longEnd);
+  }
+
 }

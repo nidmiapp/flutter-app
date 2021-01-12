@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:nidmi/main_screen.dart';
 
 import 'auth/signin.dart';
 import '../xinternal/AppGlobal.dart';
@@ -12,51 +13,10 @@ class Splash extends StatelessWidget {
     printer: PrettyPrinter(),
   );
 
-  Splash(BuildContext context){
-    _splash(context);
-  }
-
-  Future<void> _splash(BuildContext context) async {
-
-    var getUserNameSharedPreference =  await AppGlobal.getUserNameSharedPreference();
-    var getUserEmailSharedPreference = await AppGlobal.getUserEmailSharedPreference();
-    var getUserAccessSharedPreference = await AppGlobal.getUserAccessSharedPreference();
-    var getUserRefreshSharedPreference = await AppGlobal.getUserRefreshSharedPreference();
-    var getUserExpiredSharedPreference = await AppGlobal.getUserExpiredSharedPreference();
-    var getDeviceUUidSharedPreference = await AppGlobal.getDeviceUUidSharedPreference();
-    var getDeviceTypeSharedPreference = await AppGlobal.getDeviceTypeSharedPreference();
-    var isUserExpiredSharedPreference = await AppGlobal.isUserExpiredSharedPreference();
-
-    logger.i(
-        '\n  getUserNameSharedPreference:====>>>'+ (getUserNameSharedPreference == null ? 'null' : getUserNameSharedPreference)+
-            '\n  getUserEmailSharedPreference:===>>>'+ (getUserEmailSharedPreference == null ? 'null' : getUserEmailSharedPreference)+
-            '\n  getUserAccessSharedPreference:==>>>'+ (getUserAccessSharedPreference == null ? 'null' : getUserAccessSharedPreference)+
-            '\n  getUserRefreshSharedPreference:=>>>'+ (getUserRefreshSharedPreference == null ? 'null' : getUserRefreshSharedPreference)+
-            '\n  getUserExpiredSharedPreference:=>>>'+ (getUserExpiredSharedPreference == null ? 'null' : getUserExpiredSharedPreference)+
-            '\n  getDeviceUUidSharedPreference:=>>>'+ (getDeviceUUidSharedPreference == null ? 'null' : getDeviceUUidSharedPreference)+
-            '\n  getDeviceTypeSharedPreference:=>>>'+ (getDeviceTypeSharedPreference == null ? 'null' : getDeviceTypeSharedPreference)+
-            '\n  isUserExpiredSharedPreference:==>>>'+ (isUserExpiredSharedPreference.toString() == null ? 'null' : isUserExpiredSharedPreference).toString()
-    );
-
-    // List<String> deviceInfo = await AppGlobal.getDeviceDetails();
-    // print('<<<<<<<<<<<<deviceInfo>>>>>>>>>>');
-    // print(deviceInfo);
-    // print(" This line is execute before Timer");
-
-    // Timer(Duration(seconds: 5), () {
-    //   print(" This line is execute after 5 seconds");
-    //   if(isUserExpiredSharedPreference) {
-    //     print(" Call Login Page");
-    //   } else {
-    //     print(" Call Lead Page if there is. if not go to ....");
-    //   }
-    // });
-  }
-
   @override
   Widget build(BuildContext context) {
     Timer(
-        Duration(seconds: 5),
+        Duration(seconds: 2),
             () =>
                 Navigator.of(context)
                     .pushReplacement(MaterialPageRoute(builder: (context) => SignIn())));
@@ -64,11 +24,13 @@ class Splash extends StatelessWidget {
       body:Container(
         alignment: Alignment.center,
         child:
-        Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Image.asset("assets/images/NidmiLogoSign-218X300-blend.png"),]
-        ),
-      ),
+        Stack(
+            alignment: AlignmentDirectional.center,
+            children: <Widget>[
+              Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
+              Image.asset("assets/images/NidmiLogoSign2Circle100X100.png",),
+            ]
+        ),      ),
     );
   }
 }
