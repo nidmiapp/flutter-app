@@ -29,7 +29,7 @@ class DeviceService {
   }
 
   Future<DeviceResponse> httpPost(Device device, String url) async {
-    bearer = await AppGlobal.getUserAccessSharedPreference();
+    bearer = AppGlobal.getUserAccessSharedPreference();
     String endpoint = AppGlobal.baseUrlDevice + url;
     DeviceResponse usr = new DeviceResponse();
     try {

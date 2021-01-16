@@ -58,6 +58,7 @@ class AppGlobal {
   static String cipherKey;
 
   static String sharedPreferenceUserExpiry = "USEREXPIRY";
+  static String sharedPreferenceUserIdKey = "USERIDKEY";
   static String sharedPreferenceUserNameKey = "USERNAMEKEY";
   static String sharedPreferenceUserEmailKey = "USEREMAILKEY";
   static String sharedPreferenceAccessKey = "ACCESSKEY";
@@ -98,10 +99,18 @@ class AppGlobal {
   }
 
   Future<AppGlobal> configToAppGlobal() async{
+    print('befor getPreferences()');
     await getPreferences();
+    print('before _determinePosition()');
     position = await _determinePosition();
-    officeLat = position.latitude;
-    officeLong = position.longitude;
+    if(position!=null){
+      officeLat = position.latitude;
+      officeLong = position.longitude;
+    } else {
+      officeLat = -79.0;
+      officeLong = 43.0;
+    }
+
     print('officeLat: ' + officeLat.toString());
     print('officeLong: '+ officeLong.toString());
     baseUrlAuth   = AppConfig.baseUrlAuth;
@@ -148,6 +157,10 @@ class AppGlobal {
     return await preferences.setString(sharedPreferenceUserExpiry, expiryDate);
   }
 
+  static Future<bool> saveUserIdSharedPreference(String userId) async{
+    return await preferences.setString(sharedPreferenceUserIdKey, userId);
+  }
+
   static Future<bool> saveUserNameSharedPreference(String userName) async{
     return await preferences.setString(sharedPreferenceUserNameKey, userName);
   }
@@ -189,6 +202,10 @@ class AppGlobal {
 
   static String getUserExpiredSharedPreference() {
     return preferences.getString(sharedPreferenceUserExpiry);
+  }
+
+  static String getUserIdSharedPreference() {
+    return preferences.getString(sharedPreferenceUserIdKey);
   }
 
   static String getUserNameSharedPreference() {
@@ -280,32 +297,40 @@ class AppGlobal {
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permantly denied, we cannot request permissions.');
-    }
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
-        return Future.error(
-            'Location permissions are denied (actual value: $permission).');
+    try {
+print('before isLocationServiceEnabled');
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return Future.error('Location services are disabled.');
       }
+
+print('before checkPermission');
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error(
+            'Location permissions are permantly denied, we cannot request permissions.');
+      }
+
+      if (permission == LocationPermission.denied) {
+        print('before requestPermission');
+        permission = await Geolocator.requestPermission();
+        if (permission != LocationPermission.whileInUse &&
+            permission != LocationPermission.always) {
+          return Future.error(
+              'Location permissions are denied (actual value: $permission).');
+        }
+      }
+    } on Exception catch(e){
+      print(e);
+      permission = null;
     }
+    print('before getCurrentPosition');
 
     return await Geolocator.getCurrentPosition();
   }
 
   double distanceInMeters(double latStart, double longStart, double latEnd, double longEnd) {
-   return Geolocator.distanceBetween(latStart, longStart, latEnd, longEnd);
+    return Geolocator.distanceBetween(latStart, longStart, latEnd, longEnd);
   }
 
 }

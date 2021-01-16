@@ -96,7 +96,7 @@ class Configure extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     Timer(
-        Duration(seconds: 3),
+        Duration(seconds: 1),
             () => (getUserEmailSharedPreference == null || isUserExpiredSharedPreference == null)
                 ?
             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Splash()))

@@ -177,6 +177,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
               if (rslt.statusCode.startsWith('2')) { // 200, 201, ...
                 logger.i('  device_unique_id:=>>>'+rslt.device_unique_id +
                     '\n  device_type:==========>>>'+ rslt.device_type +
+                    '\n  device_token:==========>>>'+ rslt.token +
                     '\n  status:========>>>'+ rslt.statusCode);
                 AppGlobal.saveDeviceUUidSharedPreference(rslt.device_unique_id);
                 AppGlobal.saveDeviceTypeSharedPreference(rslt.device_type);
@@ -204,13 +205,13 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen()));
 
         logger.i(
-            '\n  getUserNameSharedPreference:====>>>'+ await AppGlobal.getUserNameSharedPreference()+
-                '\n  getUserEmailSharedPreference:===>>>'+ await AppGlobal.getUserEmailSharedPreference()+
-                '\n  getUserAccessSharedPreference:==>>>'+ await AppGlobal.getUserAccessSharedPreference()+
-                '\n  getUserRefreshSharedPreference:=>>>'+ await AppGlobal.getUserRefreshSharedPreference()+
-                '\n  getUserExpiredSharedPreference:=>>>'+ await AppGlobal.getUserExpiredSharedPreference()+
-                '\n  getDeviceUUidSharedPreference:=>>>'+ await AppGlobal.getDeviceUUidSharedPreference()+
-                '\n  getDeviceTypeSharedPreference:=>>>'+ await AppGlobal.getDeviceTypeSharedPreference()+
+            '\n  getUserNameSharedPreference:====>>>'+  AppGlobal.getUserNameSharedPreference()+
+                '\n  getUserEmailSharedPreference:===>>>'+ AppGlobal.getUserEmailSharedPreference()+
+                '\n  getUserAccessSharedPreference:==>>>'+ AppGlobal.getUserAccessSharedPreference()+
+                '\n  getUserRefreshSharedPreference:=>>>'+ AppGlobal.getUserRefreshSharedPreference()+
+                '\n  getUserExpiredSharedPreference:=>>>'+ AppGlobal.getUserExpiredSharedPreference()+
+                '\n  getDeviceUUidSharedPreference:=>>>'+ AppGlobal.getDeviceUUidSharedPreference()+
+                '\n  getDeviceTypeSharedPreference:=>>>'+ AppGlobal.getDeviceTypeSharedPreference()+
                 '\n  isUserExpiredSharedPreference:==>>>'+ AppGlobal.isUserExpiredSharedPreference().toString()
         );
       } else {
@@ -242,11 +243,11 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Stack(
-                    alignment: AlignmentDirectional.center,
-                    children: <Widget>[
-                      Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
-                      Image.asset("assets/images/NidmiLogoSign2Circle150X150.png"),
-                    ]
+                  alignment: AlignmentDirectional.center,
+                  children: <Widget>[
+                    Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
+                    Image.asset("assets/images/NidmiLogoSign2Circle150X150.png"),
+                  ]
                 ),
                 sizedBoxSpace,
                 TextFormField(
