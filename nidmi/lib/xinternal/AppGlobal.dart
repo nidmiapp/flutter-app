@@ -333,4 +333,20 @@ print('before checkPermission');
     return Geolocator.distanceBetween(latStart, longStart, latEnd, longEnd);
   }
 
+  String distance(double la1, double lo1, double la2, double lo2) {
+    print(la1.toString() +
+        ' ' +
+        lo2.toString() +
+        ' ' +
+        la1.toString() +
+        ' ' +
+        lo2.toString());
+    double dist = AppGlobal().distanceInMeters(la1, lo1, la2, lo2);
+    print(dist > 1000
+        ? (dist / 1000).toInt().toString() + ' Km'
+        : dist.toInt().toString() + ' m');
+    return dist > 1000
+        ? (dist / 1000).toInt().toString() + ' Km'
+        : dist.toInt().toString() + ' m';
+  }
 }

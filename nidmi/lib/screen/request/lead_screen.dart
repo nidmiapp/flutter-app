@@ -9,32 +9,10 @@ class LeadScreen extends StatelessWidget {
 //  final LayoutGroup layoutGroup;
   final VoidCallback onLayoutToggle;
 
-  String distance(double la1, double lo1, double la2, double lo2) {
-    print(la1.toString() +
-        ' ' +
-        lo2.toString() +
-        ' ' +
-        la1.toString() +
-        ' ' +
-        lo2.toString());
-    double dist = AppGlobal().distanceInMeters(la1, lo1, la2, lo2);
-    print(dist > 1000
-        ? (dist / 1000).toInt().toString() + ' Km'
-        : dist.toInt().toString() + ' m');
-    return dist > 1000
-        ? (dist / 1000).toInt().toString() + ' Km'
-        : dist.toInt().toString() + ' m';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: MainAppBar(
-      //   layoutGroup: layoutGroup,
-      //   layoutType: LayoutType.list,
-      //   onLayoutToggle: onLayoutToggle,
-      // ),
-      body: Container(
+       body: Container(
         child: _buildContent(),
       ),
     );
@@ -47,14 +25,6 @@ class LeadScreen extends StatelessWidget {
           Lead lead = allLeads[index];
           var diff = ' now';
           DateTime dt = DateTime.now();
-          // if (dt.difference(lead.created_ts).inDays > 0)
-          //   diff = dt.difference(lead.created_ts).inDays.toString() + ' d';
-          // else if (dt.difference(lead.created_ts).inHours > 0)
-          //   diff = dt.difference(lead.created_ts).inHours.toString() + ' h';
-          // else if (dt.difference(lead.created_ts).inMinutes > 0)
-          //   diff = dt.difference(lead.created_ts).inMinutes.toString() + ' m';
-          // else
-          //   diff = ' now';
 
           if (dt.difference(lead.created_ts).inSeconds < 60)
             diff = ' now';
@@ -76,7 +46,7 @@ return Card(
           color: Colors.yellow,
           )),
       title: Text('${lead.title}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14) , maxLines: 3,),
-      subtitle: Text( distance(AppGlobal.officeLat, AppGlobal.officeLong, lead.latitude, lead.longitude) +
+      subtitle: Text( AppGlobal().distance(AppGlobal.officeLat, AppGlobal.officeLong, lead.latitude, lead.longitude) +
       '        '+diff, textAlign: TextAlign.end,style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12) ,),
       trailing: IconButton(
         icon: Icon(Icons.delete),
@@ -90,65 +60,6 @@ return Card(
     ),
   ),
 );
-//          return LeadListTile(lead, distance(AppGlobal.officeLat, AppGlobal.officeLong, lead.latitude, lead.longitude));
-          /*return Container(
-            padding: EdgeInsets.fromLTRB(3, 1, 3, 1),
-            width: double.maxFinite,
-            child: Card(
-              elevation: 2,
-              child: Row(
-                children: <Widget>[
-                  Container(
-                      child: CircleAvatar(
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.yellow,
-                        ),
-                        radius: 25,
-                        // child: Text(lead.owner_id.toString()[(lead.owner_id.toString().length-1)]),
-                      )),
-                  Container(
-                    child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, top: 2, right: 2, bottom: 2),
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                // Text(lead.title,style: GoogleFonts.arimo(fontSize: 18),maxLines: 3,textDirection: TextDirection.ltr,),
-                                Text(
-                                  lead.title,
-                                  textAlign: TextAlign.start,
-                                  maxLines: 3,
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: <Widget>[
-//                        Text( distance(AppGlobal.officeLat, AppGlobal.officeLong, lead.latitude, lead.longitude) , style: GoogleFonts.mada(fontSize: 14, fontWeight: FontWeight.w400), ),
-                                Text(distance(
-                                    AppGlobal.officeLat,
-                                    AppGlobal.officeLong,
-                                    lead.latitude,
-                                    lead.longitude)),
-                                //Spacer(),
-                                Text(diff),
-                              ],
-                            ),
-                          ],
-                        )),
-                  ),
-                  Spacer(),
-                  Container(
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.yellow,
-                        ),
-                        ),
-                ],
-              ),
-            ),
-          );*/
         });
   }
 }
@@ -178,18 +89,6 @@ class LeadListTile extends ListTile {
   );
 }
 
-/*
-num request_id;
-num owner_id;
-String category;
-double latitude;
-double longitude;
-String title;
-String media;
-bool confirmed;
-DateTime created_ts;
-DateTime updated_ts;
-*/
 DateTime dt = DateTime.now();
 List<Lead> allLeads = [
   Lead(
