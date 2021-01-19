@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:nidmi/screen/request/lead_screen.dart';
+import 'package:nidmi/screen/search/search.dart';
 
 class MainScreen extends StatelessWidget {
   static const String _title = 'Flutter Code Sample';
@@ -163,6 +164,7 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
     print('item: '+item.toString());
     switch(item) {
       case 0: return LeadScreen();
+      case 1: return DropdownScreen();
     }
 
   }
