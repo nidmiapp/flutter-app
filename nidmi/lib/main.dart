@@ -96,7 +96,7 @@ class Configure extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     Timer(
-        Duration(seconds: 1),
+        Duration(seconds: 3),
             () => (getUserEmailSharedPreference == null || isUserExpiredSharedPreference == null)
                 ?
             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Splash()))
@@ -112,7 +112,7 @@ class Configure extends StatelessWidget{
             alignment: AlignmentDirectional.center,
             children: <Widget>[
               Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
-              Image.asset("assets/images/NidmiLogoSign2Circle100X100.png",),
+              Image.asset("assets/images/NidmiLogoSign2Circle900X900.png",width: 200, height: 200,),
             ]
         ),
       ),

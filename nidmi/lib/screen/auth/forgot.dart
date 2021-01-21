@@ -169,7 +169,7 @@ class TextFormFieldForgotState extends State<TextFormFieldForgot> {
                     alignment: AlignmentDirectional.center,
                     children: <Widget>[
                       Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
-                      Image.asset("assets/images/NidmiLogoSign2Circle150X150.png"),
+                      Image.asset("assets/images/NidmiLogoSign2Circle900X900.png",width: 200, height: 200,),
                     ]
                 ),
                 sizedBoxSpace,

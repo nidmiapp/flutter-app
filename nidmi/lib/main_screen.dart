@@ -1,6 +1,10 @@
+import 'package:flutter/cupertino.dart';
 
+import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:nidmi/screen/request/lead_screen.dart';
+import 'package:nidmi/screen/request/request_list_screen.dart';
 import 'package:nidmi/screen/search/search.dart';
 
 class MainScreen extends StatelessWidget {
@@ -32,6 +36,7 @@ class MainScreenWidget extends StatefulWidget {
 /// This is the private State class that goes with MainScreenWidget.
 class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMixin {
   int _selectedIndex = 0;
+  String _appTitle = 'Leads';
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
@@ -56,6 +61,28 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      switch(index) {
+        case 0:
+          setState(() {
+            _appTitle = 'Leads';
+          });
+          break;
+        case 1:
+          setState(() {
+            _appTitle = 'Search request';
+          });
+          break;
+        case 2:
+          setState(() {
+            _appTitle = 'Requests';
+          });
+          break;
+        case 3:
+          setState(() {
+            _appTitle = 'Account';
+          });
+          break;
+      }
     });
   }
 
@@ -93,9 +120,10 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return new WillPopScope(
+    child: Scaffold(
       appBar: AppBar(
-        title: const Text('Nidmi is ready to serve you'),
+        title: Text(_appTitle),
         actions: [
           PopupMenuButton<MoreVertAction>(
             onSelected: handleDemoAction,
@@ -145,7 +173,7 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.request_quote_outlined),
-            label: 'Request',
+            label: 'Requests',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_box_outlined),
@@ -157,16 +185,64 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
        selectedItemColor: Colors.indigo,
         onTap: _onItemTapped,
       ),
+    ),
+      onWillPop: _willPopCallback,
     );
   }
 
   Widget _buildBody(int item) {
     print('item: '+item.toString());
     switch(item) {
-      case 0: return LeadScreen();
-      case 1: return DropdownScreen();
+      case 0:
+        setState(() {
+          _appTitle = 'Leads';
+        });
+        return LeadScreen();
+      case 1:
+        setState(() {
+          _appTitle = 'Search request';
+        });
+        return SearchScreen();
+      case 2:
+        setState(() {
+          _appTitle = 'Requests';
+        });
+        return RequestListScreen();
     }
 
+  }
+
+  bool isTimerRunning = false;
+
+  startTimeout([int milliseconds]) {
+    isTimerRunning = true;
+    var timer = new Timer.periodic(new Duration(seconds: 2), (time) {
+      isTimerRunning = false;
+      time.cancel();
+    });
+  }
+
+  void _showToast(BuildContext context) {
+    Fluttertoast.showToast(
+      msg: "Press back again to exit",
+      toastLength: Toast.LENGTH_SHORT,
+    );
+  }
+
+  Future<bool> _willPopCallback() async {
+
+    int stackCount = Navigator.of(context).getNavigationHistory().length;
+    if (stackCount == 1) {
+      if (!isTimerRunning) {
+        startTimeout();
+        _showToast(context);
+        return false;
+      } else
+        return true;
+    } else {
+      isTimerRunning = false;
+      return true;
+    }
   }
 
 }

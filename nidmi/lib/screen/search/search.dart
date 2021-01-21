@@ -5,6 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:nidmi/entity/Request.dart';
 import 'package:nidmi/xinternal/AppGlobal.dart';
 
+class DurationItem {
+  const DurationItem(this.name,this.code);
+  final String name;
+  final String code;
+}
+
 class CategoryItem {
   const CategoryItem(this.name,this.code);
   final String name;
@@ -19,10 +25,10 @@ class SubCategoryItem {
 
 List<Request> searchResult = new List.empty(growable: true);
 
-class DropdownScreen extends StatefulWidget {
-  State createState() =>  DropdownScreenState();
+class SearchScreen extends StatefulWidget {
+  State createState() =>  SearchScreenState();
 }
-class DropdownScreenState extends State<DropdownScreen> {
+class SearchScreenState extends State<SearchScreen> {
 // Declare this variable
   int selectedRadio;
 
@@ -37,7 +43,18 @@ class DropdownScreenState extends State<DropdownScreen> {
     setState(() {
       selectedRadio = val;
     });
-  }  CategoryItem selectedCategory;
+  }
+
+  DurationItem selectedDuration;
+  List<DurationItem> duration = <DurationItem>[
+    const DurationItem('Today',  '0',),
+    const DurationItem('3 days', '1',),
+    const DurationItem('1 week', '2',),
+    const DurationItem('2 weeks','3'),
+    const DurationItem('1 month','4'),
+  ];
+
+  CategoryItem selectedCategory;
   List<CategoryItem> category = <CategoryItem>[
     const CategoryItem('All Category','0000',),
     const CategoryItem('Category','0001',),
@@ -45,6 +62,7 @@ class DropdownScreenState extends State<DropdownScreen> {
     const CategoryItem('Category','0003'),
     const CategoryItem('Category','0004'),
   ];
+
   SubCategoryItem selectedSubCategory;
   List<SubCategoryItem> subcategory = <SubCategoryItem>[
     const SubCategoryItem('All SubCategory','00000',),
@@ -86,6 +104,7 @@ class DropdownScreenState extends State<DropdownScreen> {
     print(selectedRadio);
     print(selectedCategory.code +' '+selectedCategory.name);
     print(selectedSubCategory.code +' '+selectedSubCategory.name);
+    print(selectedDuration.code +' '+selectedDuration.name);
     print(searchController.text);
     searchResult.clear();
     print(searchResult.length);
@@ -258,17 +277,50 @@ class DropdownScreenState extends State<DropdownScreen> {
                 ),
 
                 Padding(padding: EdgeInsets.fromLTRB(4,4,4,4),
-                  child: TextField(
-                    maxLines: 1,
-                    maxLength: 30,
-                    controller: searchController,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Search',
-                      hintText: 'Enter your word',
-                    ),
-                  ),),
+                  child:
+                  Column(
+                      children: <Widget>[
+                        TextField(
+                          maxLines: 1,
+                          maxLength: 30,
+                          controller: searchController,
+                          obscureText: false,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Search',
+                            hintText: 'Enter your word',
+                          ),
+                        ),
+                        DropdownButton<DurationItem>(
+                          hint:  Text("Select duration"),
+                          value: selectedDuration,
+                          onChanged: (DurationItem value) {
+                            setState(() {
+                              selectedDuration = value;
+                            });
+                          },
+                          // isExpanded: true,
+                          items: duration.map((DurationItem dur) {
+                            return  DropdownMenuItem<DurationItem>(
+                              value: dur,
+                              child: Row(
+                                children: <Widget>[
+                                  // Text(
+                                  //   subcat.code,
+                                  //   style:  TextStyle(color: Colors.black),
+                                  // ),
+                                  // SizedBox(width: 10,),
+                                  Text(
+                                    dur.name,
+                                    style:  TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),]
+                  ),
+                ),
 
                 Padding(padding: EdgeInsets.fromLTRB(4,4,4,4),
                   child: ElevatedButton(

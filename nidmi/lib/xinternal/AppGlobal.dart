@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nidmi/entity/Request.dart';
 import '../util/nidmi_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
@@ -348,5 +350,212 @@ print('before checkPermission');
     return dist > 1000
         ? (dist / 1000).toInt().toString() + ' Km'
         : dist.toInt().toString() + ' m';
+  }
+
+  List<String> parsedUrls(String jsonMedia){
+
+    var tagsJson = jsonDecode(jsonMedia)['media'];
+//    List<String> list = tagsJson != null ? List.from(tagsJson) : null;
+
+    return tagsJson != null ? List.from(tagsJson) : null;
+      // [
+      // "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",
+      // "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg",
+      // "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/cinque-terre-279013_640.jpg",
+      // "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/coast-3358820_640.jpg",
+      //  "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/empire-state-building-1081929_640.jpg",
+      // "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/maldives-1993704_640.jpg",
+      // "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/new-york-city-336475_640.jpg",
+      // "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/plouzane-1758197_640.jpg",
+      // "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/sea-2470908_640.jpg",
+      // "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/sunset-675847_640.jpg",
+      // "https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/surfing-2212948_640.jpg",
+ //   ];
+  }
+
+  List<Request> readRequest() {
+    DateTime dt = DateTime.now();
+    return ([
+      Request(
+          request_id: 103,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.441234,
+          longitude: -122.041234,
+          title:
+          'Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 ',
+          media: '{"media":'
+              '["https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",'
+              '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg"]'
+              '}',
+          confirmed: true,
+          created_ts: DateTime.now()),
+      Request(
+          request_id: 104,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.451234,
+          longitude: -122.051234,
+          title: 'Title4',
+          media: '{"media":'
+              '["https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",'
+              '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg","https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",'
+              '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg","https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",'
+              '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg"]'
+              '}',
+          confirmed: true,
+          created_ts: dt.add(new Duration(minutes: -29))),
+      Request(
+          request_id: 105,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.461234,
+          longitude: -122.061234,
+          title: 'Title5',
+          media: '{"media":[]}',
+          confirmed: true,
+          created_ts: dt.add(new Duration(minutes: -58))),
+      Request(
+          request_id: 106,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.471234,
+          longitude: -122.071234,
+          title: 'Title6',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(hours: -1))),
+      Request(
+          request_id: 107,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.481234,
+          longitude: -122.081234,
+          title: 'Title7',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(hours: -2))),
+      Request(
+          request_id: 108,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.491234,
+          longitude: -122.091234,
+          title: 'Title8',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(hours: -21))),
+      Request(
+          request_id: 109,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.41234,
+          longitude: -122.01234,
+          title: 'Title9',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(hours: -25))),
+      Request(
+          request_id: 110,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.41234,
+          longitude: -122.01234,
+          title: 'تست آن است که خود بگوید نه آنکه عطار نویسد',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(days: -1))),
+      Request(
+          request_id: 111,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.41234,
+          longitude: -122.01234,
+          title: 'Title11',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(days: -2))),
+      Request(
+          request_id: 112,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.41234,
+          longitude: -122.01234,
+          title: 'Title12',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(days: -3))),
+      Request(
+          request_id: 114,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.41234,
+          longitude: -122.01234,
+          title: 'Title14',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(days: -4))),
+      Request(
+          request_id: 115,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.41234,
+          longitude: -122.01234,
+          title: 'Title15',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(days: -4))),
+      Request(
+          request_id: 102,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.431234,
+          longitude: -122.031234,
+          title: 'Title2',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(days: -5))),
+      Request(
+          request_id: 116,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.41234,
+          longitude: -122.01234,
+          title: 'Title16',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(days: -7))),
+      Request(
+          request_id: 101,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.421234,
+          longitude: -122.021234,
+          title: 'Title1',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(days: -8))),
+      Request(
+          request_id: 100,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.411234,
+          longitude: -122.011234,
+          title: 'Title0Title0Title0Title0Title0Title0Title0Title0Title0 ',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(days: -9))),
+      Request(
+          request_id: 113,
+          owner_id: 1,
+          category: 'Cat01',
+          latitude: 37.41234,
+          longitude: -122.01234,
+          title: 'Title13',
+          media: '',
+          confirmed: true,
+          created_ts: dt.add(new Duration(days: -15)))
+
+    ]);
   }
 }

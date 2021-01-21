@@ -99,7 +99,10 @@ List<Lead> allLeads = [
       longitude: -122.041234,
       title:
       'Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 ',
-      media: 'Url1,Url2',
+      media: '{"media":'
+          '["https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",'
+          '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg"]'
+          '}',
       confirmed: true,
       created_ts: DateTime.now()),
   Lead(
@@ -109,7 +112,7 @@ List<Lead> allLeads = [
       latitude: 37.451234,
       longitude: -122.051234,
       title: 'Title4',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(minutes: -29))),
   Lead(
@@ -119,7 +122,7 @@ List<Lead> allLeads = [
       latitude: 37.461234,
       longitude: -122.061234,
       title: 'Title5',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(minutes: -58))),
   Lead(
@@ -129,7 +132,7 @@ List<Lead> allLeads = [
       latitude: 37.471234,
       longitude: -122.071234,
       title: 'Title6',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(hours: -1))),
   Lead(
@@ -139,7 +142,7 @@ List<Lead> allLeads = [
       latitude: 37.481234,
       longitude: -122.081234,
       title: 'Title7',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(hours: -2))),
   Lead(
@@ -149,7 +152,7 @@ List<Lead> allLeads = [
       latitude: 37.491234,
       longitude: -122.091234,
       title: 'Title8',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(hours: -21))),
   Lead(
@@ -159,7 +162,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title9',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(hours: -25))),
   Lead(
@@ -169,7 +172,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'تست آن است که خود بگوید نه آنکه عطار نویسد',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -1))),
   Lead(
@@ -179,7 +182,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title11',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -2))),
   Lead(
@@ -189,7 +192,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title12',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -3))),
  Lead(
@@ -199,7 +202,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title14',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -4))),
   Lead(
@@ -209,7 +212,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title15',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -4))),
   Lead(
@@ -219,7 +222,7 @@ List<Lead> allLeads = [
       latitude: 37.431234,
       longitude: -122.031234,
       title: 'Title2',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -5))),
   Lead(
@@ -229,7 +232,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title16',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -7))),
   Lead(
@@ -239,7 +242,7 @@ List<Lead> allLeads = [
       latitude: 37.421234,
       longitude: -122.021234,
       title: 'Title1',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -8))),
   Lead(
@@ -249,7 +252,7 @@ List<Lead> allLeads = [
       latitude: 37.411234,
       longitude: -122.011234,
       title: 'Title0Title0Title0Title0Title0Title0Title0Title0Title0 ',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -9))),
   Lead(
@@ -259,7 +262,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title13',
-      media: 'Url1,Url2',
+      media: '',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -15)))
 
