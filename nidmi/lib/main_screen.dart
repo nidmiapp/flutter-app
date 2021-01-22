@@ -197,7 +197,7 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
         setState(() {
           _appTitle = 'Leads';
         });
-        return LeadScreen();
+        return LeadListScreen();
       case 1:
         setState(() {
           _appTitle = 'Search request';
@@ -230,7 +230,12 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
   }
 
   Future<bool> _willPopCallback() async {
-
+/*
+Added in navigator.dart:
+  List<_RouteEntry> getNavigationHistory(){
+    return _history;
+  }
+ */
     int stackCount = Navigator.of(context).getNavigationHistory().length;
     if (stackCount == 1) {
       if (!isTimerRunning) {

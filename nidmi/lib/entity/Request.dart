@@ -7,6 +7,7 @@ class Request {
   num request_id;
   num owner_id;
   String category;
+  String sub_category;
   double latitude;
   double longitude;
   String title;
@@ -19,6 +20,7 @@ class Request {
     this.request_id,
     this.owner_id,
     this.category,
+    this.sub_category,
     this.latitude,
     this.longitude,
     this.title,
@@ -32,6 +34,7 @@ class Request {
     this.request_id = req.request_id;
     this.owner_id = req.owner_id;
     this.category = req.category;
+    this.sub_category = req.sub_category;
     this.latitude = req.latitude;
     this.longitude = req.longitude;
     this.title = req.title;
@@ -49,6 +52,7 @@ class Request {
         request_id : json['request_id'] ?? '',
         owner_id : json['owner_id'] ?? 0,
         category : json['category'] ?? '',
+        sub_category : json['sub_category'] ?? '',
         latitude : json['latitude'] ?? '',
         longitude : json['longitude'] ?? '',
         title : json['title'] ?? '',

@@ -62,6 +62,10 @@ class RequestDetailScreenState extends State<RequestDetailScreen> {
     urls!=null ? print('urls not null') : print('urls null');
     print(urls);
 
+    print('office lat, long: '+AppGlobal.officeLat.toString()+','+ AppGlobal.officeLong.toString());
+    print('current lat, long: '+AppGlobal.currentLat.toString()+','+ AppGlobal.currentLong.toString());
+    print('request lat, long: '+selectedRequest.latitude.toString()+','+ selectedRequest.longitude.toString() );
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -87,9 +91,11 @@ class RequestDetailScreenState extends State<RequestDetailScreen> {
                         'This is request title. This is request title. \n',
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14) ,
                       maxLines: 7, textAlign: TextAlign.left,),
-                    subtitle: Text( 'From Office: '+ AppGlobal().distance(AppGlobal.officeLat, AppGlobal.officeLong, selectedRequest.latitude, selectedRequest.longitude) + '\n' +
-                        'From current: '+ AppGlobal().distance(AppGlobal.officeLat, AppGlobal.officeLong, selectedRequest.latitude, selectedRequest.longitude) + '      created: ' +
-                        diff, textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.w300, fontSize: 11, ) ),
+                    subtitle: Text( 'From Office: '+ AppGlobal().distance(AppGlobal.officeLat, AppGlobal.officeLong, selectedRequest.latitude, selectedRequest.longitude) +
+                        '   ' + AppGlobal().bearing(AppGlobal.officeLat, AppGlobal.officeLong, selectedRequest.latitude, selectedRequest.longitude) + '\n' +
+                        'From current: '+ AppGlobal().distance(AppGlobal.currentLat, AppGlobal.currentLong, selectedRequest.latitude, selectedRequest.longitude) +
+                        '   ' + AppGlobal().bearing(AppGlobal.currentLat, AppGlobal.currentLong, selectedRequest.latitude, selectedRequest.longitude) +
+                        '      created: ' + diff, textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.w300, fontSize: 11, ) ),
 
                     onTap: () {
                       print('Issue tile tapped');

@@ -45,6 +45,8 @@ class AppGlobal {
 
   static double officeLat;
   static double officeLong;
+  static double currentLat;
+  static double currentLong;
 
   static String baseUrlAuth;
   static String baseUrlAccInfo;
@@ -106,12 +108,14 @@ class AppGlobal {
     print('before _determinePosition()');
     position = await _determinePosition();
     if(position!=null){
-      officeLat = position.latitude;
-      officeLong = position.longitude;
+      currentLat = position.latitude;
+      currentLong  = position.longitude;
     } else {
-      officeLat = -79.0;
-      officeLong = 43.0;
+      currentLat = -79.0;
+      currentLong = 43.0;
     }
+    officeLat = currentLat + 0.4;
+    officeLong = currentLong + 0.3;
 
     print('officeLat: ' + officeLat.toString());
     print('officeLong: '+ officeLong.toString());
@@ -352,6 +356,45 @@ print('before checkPermission');
         : dist.toInt().toString() + ' m';
   }
 
+
+  double bearingBetween(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
+    return Geolocator.bearingBetween(startLatitude, startLongitude, endLatitude, endLongitude);
+  }
+
+  String bearing(double la1, double lo1, double la2, double lo2) {
+    print(la1.toString() +
+        ' ' +
+        lo2.toString() +
+        ' ' +
+        la1.toString() +
+        ' ' +
+        lo2.toString());
+    double bearing = AppGlobal().bearingBetween(la1, lo1, la2, lo2);
+    print('bearing: '+ bearing.toString());
+String direction;
+    if(bearing<=22.5 && bearing >=-22.5)
+      direction = 'North';
+    else if(bearing>22.5 && bearing <67.5)
+      direction = 'North East';
+    else if(bearing>=67.5 && bearing <=112.5)
+      direction = 'East';
+    else if(bearing>112.5 && bearing <157.5)
+      direction = 'South East';
+    else if(bearing>=157.5 || bearing <=-157.5)
+      direction = 'South';
+    else if(bearing<-22.5 && bearing >-67.5)
+      direction = 'North West';
+    else if(bearing<=-67.5 && bearing >=-112.5)
+      direction = 'West';
+    else if(bearing<-112.5 && bearing >-157.5)
+      direction = 'South West';
+    else
+      direction='n/a';
+
+    return direction;
+  }
+
+
   List<String> parsedUrls(String jsonMedia){
 
     var tagsJson = jsonDecode(jsonMedia)['media'];
@@ -412,7 +455,7 @@ print('before checkPermission');
           latitude: 37.461234,
           longitude: -122.061234,
           title: 'Title5',
-          media: '{"media":[]}',
+          media: '{"media":["https://picsum.photos/seed/picsum/200/300","https://picsum.photos/200/300?grayscale","https://picsum.photos/200/300/?blur"]}',
           confirmed: true,
           created_ts: dt.add(new Duration(minutes: -58))),
       Request(
@@ -422,7 +465,7 @@ print('before checkPermission');
           latitude: 37.471234,
           longitude: -122.071234,
           title: 'Title6',
-          media: '',
+          media: '{"media":["https://picsum.photos/200/300?random=2","https://picsum.photos/200/300?random=1","https://picsum.photos/200/300?random=2"]}',
           confirmed: true,
           created_ts: dt.add(new Duration(hours: -1))),
       Request(
@@ -432,7 +475,7 @@ print('before checkPermission');
           latitude: 37.481234,
           longitude: -122.081234,
           title: 'Title7',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(hours: -2))),
       Request(
@@ -442,7 +485,7 @@ print('before checkPermission');
           latitude: 37.491234,
           longitude: -122.091234,
           title: 'Title8',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(hours: -21))),
       Request(
@@ -452,7 +495,7 @@ print('before checkPermission');
           latitude: 37.41234,
           longitude: -122.01234,
           title: 'Title9',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(hours: -25))),
       Request(
@@ -462,7 +505,7 @@ print('before checkPermission');
           latitude: 37.41234,
           longitude: -122.01234,
           title: 'تست آن است که خود بگوید نه آنکه عطار نویسد',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(days: -1))),
       Request(
@@ -472,7 +515,7 @@ print('before checkPermission');
           latitude: 37.41234,
           longitude: -122.01234,
           title: 'Title11',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(days: -2))),
       Request(
@@ -482,7 +525,7 @@ print('before checkPermission');
           latitude: 37.41234,
           longitude: -122.01234,
           title: 'Title12',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(days: -3))),
       Request(
@@ -492,7 +535,7 @@ print('before checkPermission');
           latitude: 37.41234,
           longitude: -122.01234,
           title: 'Title14',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(days: -4))),
       Request(
@@ -502,7 +545,7 @@ print('before checkPermission');
           latitude: 37.41234,
           longitude: -122.01234,
           title: 'Title15',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(days: -4))),
       Request(
@@ -512,7 +555,7 @@ print('before checkPermission');
           latitude: 37.431234,
           longitude: -122.031234,
           title: 'Title2',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(days: -5))),
       Request(
@@ -522,7 +565,7 @@ print('before checkPermission');
           latitude: 37.41234,
           longitude: -122.01234,
           title: 'Title16',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(days: -7))),
       Request(
@@ -532,7 +575,7 @@ print('before checkPermission');
           latitude: 37.421234,
           longitude: -122.021234,
           title: 'Title1',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(days: -8))),
       Request(
@@ -542,7 +585,7 @@ print('before checkPermission');
           latitude: 37.411234,
           longitude: -122.011234,
           title: 'Title0Title0Title0Title0Title0Title0Title0Title0Title0 ',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(days: -9))),
       Request(
@@ -552,7 +595,7 @@ print('before checkPermission');
           latitude: 37.41234,
           longitude: -122.01234,
           title: 'Title13',
-          media: '',
+          media: '{"media":[]}',
           confirmed: true,
           created_ts: dt.add(new Duration(days: -15)))
 

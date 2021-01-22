@@ -11,6 +11,12 @@ class DurationItem {
   final String code;
 }
 
+class LocationItem {
+  const LocationItem(this.name,this.code);
+  final String name;
+  final String code;
+}
+
 class CategoryItem {
   const CategoryItem(this.name,this.code);
   final String name;
@@ -52,6 +58,13 @@ class SearchScreenState extends State<SearchScreen> {
     const DurationItem('1 week', '2',),
     const DurationItem('2 weeks','3'),
     const DurationItem('1 month','4'),
+  ];
+
+
+  LocationItem selectedLocation;
+  List<LocationItem> location = <LocationItem>[
+    const LocationItem('From office',  '0',),
+    const LocationItem('From current', '1',)
   ];
 
   CategoryItem selectedCategory;
@@ -275,22 +288,22 @@ class SearchScreenState extends State<SearchScreen> {
                       ]
                   ),
                 ),
-
+                TextField(
+                  maxLines: 1,
+                  maxLength: 30,
+                  controller: searchController,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Search',
+                    hintText: 'Enter your word',
+                  ),
+                ),
                 Padding(padding: EdgeInsets.fromLTRB(4,4,4,4),
                   child:
-                  Column(
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        TextField(
-                          maxLines: 1,
-                          maxLength: 30,
-                          controller: searchController,
-                          obscureText: false,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Search',
-                            hintText: 'Enter your word',
-                          ),
-                        ),
                         DropdownButton<DurationItem>(
                           hint:  Text("Select duration"),
                           value: selectedDuration,
@@ -318,7 +331,36 @@ class SearchScreenState extends State<SearchScreen> {
                               ),
                             );
                           }).toList(),
-                        ),]
+                        ),
+                        DropdownButton<LocationItem>(
+                          hint:  Text("Select location"),
+                          value: selectedLocation,
+                          onChanged: (LocationItem value) {
+                            setState(() {
+                              selectedLocation = value;
+                            });
+                          },
+                          // isExpanded: true,
+                          items: location.map((LocationItem loc) {
+                            return  DropdownMenuItem<LocationItem>(
+                              value: loc,
+                              child: Row(
+                                children: <Widget>[
+                                  // Text(
+                                  //   subcat.code,
+                                  //   style:  TextStyle(color: Colors.black),
+                                  // ),
+                                  // SizedBox(width: 10,),
+                                  Text(
+                                    loc.name,
+                                    style:  TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ]
                   ),
                 ),
 

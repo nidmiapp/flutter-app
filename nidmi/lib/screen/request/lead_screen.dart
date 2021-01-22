@@ -1,11 +1,13 @@
 import 'dart:ffi';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:nidmi/entity/Request.dart';
+import 'package:nidmi/screen/request/request_detail_screen.dart';
 import 'package:nidmi/xinternal/AppGlobal.dart';
 import '../../entity/Lead.dart';
 
-class LeadScreen extends StatelessWidget {
-  LeadScreen({Key key, this.onLayoutToggle}) : super(key: key);
+class LeadListScreen extends StatelessWidget {
+  LeadListScreen({Key key, this.onLayoutToggle}) : super(key: key);
 //  final LayoutGroup layoutGroup;
   final VoidCallback onLayoutToggle;
 
@@ -13,12 +15,12 @@ class LeadScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
        body: Container(
-        child: _buildContent(),
+        child: _buildContent(context),
       ),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return ListView.builder(
         itemCount: allLeads.length,
         itemBuilder: (BuildContext content, int index) {
@@ -47,8 +49,10 @@ return Card(
           )),
       title: Text('${lead.title}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14) , maxLines: 3,),
       subtitle: Text( AppGlobal().distance(AppGlobal.officeLat, AppGlobal.officeLong, lead.latitude, lead.longitude) +
-      '        '+diff, textAlign: TextAlign.end,style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12) ,),
+      '        '+diff, textAlign: TextAlign.end,style: TextStyle(color: Colors.lightBlueAccent, fontWeight: FontWeight.w300, fontSize: 12) ,),
       trailing: IconButton(
+        color: Colors.red,
+        //splashColor: Colors.yellow,
         icon: Icon(Icons.delete),
         tooltip: 'Delete lead',
         onPressed: () {
@@ -56,6 +60,9 @@ return Card(
       ),
       onTap: () {
         print('Issue tile tapped');
+        Request request = new Request();
+        request.copyLead(lead);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => RequestDetailScreen(request)));
       },
     ),
   ),
@@ -64,6 +71,7 @@ return Card(
   }
 }
 
+/*
 class LeadListTile extends ListTile {
   LeadListTile(Lead lead, dist)
       : super(
@@ -88,6 +96,7 @@ class LeadListTile extends ListTile {
     ),
   );
 }
+*/
 
 DateTime dt = DateTime.now();
 List<Lead> allLeads = [
@@ -95,13 +104,14 @@ List<Lead> allLeads = [
       request_id: 103,
       owner_id: 1,
       category: 'Cat01',
-      latitude: 37.441234,
-      longitude: -122.041234,
+      latitude: 37.138347,
+      longitude: -121.73071489,
       title:
       'Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 ',
       media: '{"media":'
           '["https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",'
-          '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg"]'
+          '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg",'
+          '"https://picsum.photos/200/300?random=2"]'
           '}',
       confirmed: true,
       created_ts: DateTime.now()),
@@ -112,7 +122,7 @@ List<Lead> allLeads = [
       latitude: 37.451234,
       longitude: -122.051234,
       title: 'Title4',
-      media: '',
+      media: '{"media":["https://picsum.photos/200/300?random=2","https://picsum.photos/200/300?random=1","https://picsum.photos/200/300?random=2"]}',
       confirmed: true,
       created_ts: dt.add(new Duration(minutes: -29))),
   Lead(
@@ -122,7 +132,7 @@ List<Lead> allLeads = [
       latitude: 37.461234,
       longitude: -122.061234,
       title: 'Title5',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(minutes: -58))),
   Lead(
@@ -132,7 +142,7 @@ List<Lead> allLeads = [
       latitude: 37.471234,
       longitude: -122.071234,
       title: 'Title6',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(hours: -1))),
   Lead(
@@ -142,7 +152,7 @@ List<Lead> allLeads = [
       latitude: 37.481234,
       longitude: -122.081234,
       title: 'Title7',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(hours: -2))),
   Lead(
@@ -152,7 +162,7 @@ List<Lead> allLeads = [
       latitude: 37.491234,
       longitude: -122.091234,
       title: 'Title8',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(hours: -21))),
   Lead(
@@ -162,7 +172,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title9',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(hours: -25))),
   Lead(
@@ -172,7 +182,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'تست آن است که خود بگوید نه آنکه عطار نویسد',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -1))),
   Lead(
@@ -182,7 +192,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title11',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -2))),
   Lead(
@@ -192,7 +202,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title12',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -3))),
  Lead(
@@ -202,7 +212,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title14',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -4))),
   Lead(
@@ -212,7 +222,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title15',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -4))),
   Lead(
@@ -222,7 +232,7 @@ List<Lead> allLeads = [
       latitude: 37.431234,
       longitude: -122.031234,
       title: 'Title2',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -5))),
   Lead(
@@ -232,7 +242,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title16',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -7))),
   Lead(
@@ -242,7 +252,7 @@ List<Lead> allLeads = [
       latitude: 37.421234,
       longitude: -122.021234,
       title: 'Title1',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -8))),
   Lead(
@@ -252,7 +262,7 @@ List<Lead> allLeads = [
       latitude: 37.411234,
       longitude: -122.011234,
       title: 'Title0Title0Title0Title0Title0Title0Title0Title0Title0 ',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -9))),
   Lead(
@@ -262,7 +272,7 @@ List<Lead> allLeads = [
       latitude: 37.41234,
       longitude: -122.01234,
       title: 'Title13',
-      media: '',
+      media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -15)))
 
