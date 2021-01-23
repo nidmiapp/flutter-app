@@ -6,9 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:nidmi/entity/Request.dart';
-import 'package:nidmi/screen/request/reply_screen.dart';
+import 'package:nidmi/main_screen.dart';
 import 'package:nidmi/xinternal/AppGlobal.dart';
 import 'package:http/http.dart' as http;
+
+import 'lead_list_screen.dart';
 
 class CategoryItem {
   const CategoryItem(this.name,this.code);
@@ -22,20 +24,19 @@ class SubCategoryItem {
   final String code;
 }
 
-//Request request = selectedRequest;
-
-
 Request selectedRequest;
-class RequestDetailScreen extends StatefulWidget {
-  RequestDetailScreen(Request req){
+class ReplyScreen extends StatefulWidget {
+  ReplyScreen(Request req){
     selectedRequest = req;
   }
-  State createState() =>  RequestDetailScreenState();
+  State createState() =>  ReplyScreenState();
 }
-class RequestDetailScreenState extends State<RequestDetailScreen> {
+
+class ReplyScreenState extends State<ReplyScreen> {
 // Declare this variable
   int selectedRadio;
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
+  int supplier_id = int.parse(AppGlobal.getUserIdSharedPreference()==null ? "-1" : AppGlobal.getUserIdSharedPreference() );
   bool flag = true;
   var diff = ' now';
   bool replyMode = false;
@@ -77,9 +78,7 @@ class RequestDetailScreenState extends State<RequestDetailScreen> {
           ),
         ),
         body:
-        SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
+Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Card(
@@ -101,43 +100,81 @@ class RequestDetailScreenState extends State<RequestDetailScreen> {
                     ),
                   ),
                 ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 1,bottom: 1,left: 1,right: 1),
+                    child:
+                    Container(
+                      height: 100,
+                      child: GridView.count(
+                      scrollDirection: Axis.vertical,
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 1.1,
+                      mainAxisSpacing: 1.1,
+                      shrinkWrap: true,
+                      children: List.generate(urls.length, (index) {
+                        return Padding(
+                          padding: EdgeInsets.all(1.0),
+                          child: Container(
+                            child: Image.network(
+                              urls[index],
+                            ),
+                            padding: EdgeInsets.all(1.0),
+                           // height: 70.0,
+                           // width: 135.0,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1.0,
+                                color: Color(0xFFF9AD16),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      ),
+                    ),),
+                  ),
+                ),
                 Card(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-                    child: Center(
-                        child:Column(
-                          children: [
-                            if(urls==null || urls.isEmpty)
-                              Text('No image', textAlign: TextAlign.center,),
-                            if(urls!=null && urls.length>0 && urls[0].isNotEmpty)
-                              Image.network(urls[0]),
-                            if(urls!=null && urls.length>1 && urls[1].isNotEmpty)
-                              Image.network(urls[1]),
-                            if(urls!=null && urls.length>2 && urls[2].isNotEmpty)
-                              Image.network(urls[2]),
-                            if(urls!=null && urls.length>3 && urls[3].isNotEmpty)
-                              Image.network(urls[3]),
-                            if(urls!=null && urls.length>4 && urls[4].isNotEmpty)
-                              Image.network(urls[4]),
-                          ],
-                        )
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: TextFormField(
+                      maxLength: 2000,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        filled: true,
+                        hintText: "Reply to above request",
+                        labelText: "Reply to above request",
+                      ),
+                      onSaved: (value) {
+                      },
+                    //  validator: _validateField.validateName,
                     ),
                   ),
+                ),
 
-                )]
+            ]
           ),
-        ),
+
 
         floatingActionButton: FloatingActionButton(
+          mini: true,
+          tooltip: "Send to requester",
           onPressed: () {
             setState(() {
               replyMode = true;
               print('FloatingActionButton tapped');
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ReplyScreen(selectedRequest)));
+              print('/MainScreen');
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(
+                  builder: (context) => MainScreen()
+              ),
+                  ModalRoute.withName("/MainScreen")
+              );
             });
             // Add your onPressed code here!
           },
-          child: Icon(Icons.reply),
+          child: Icon(Icons.send_outlined),
           backgroundColor: Colors.deepOrange,
         )
     );

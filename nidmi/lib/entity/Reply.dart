@@ -1,9 +1,9 @@
 import 'dart:core';
 
 class Reply {
-  num reply_id;
-  num request_id;
-  num supplier_id;
+  int reply_id;
+  int request_id;
+  int supplier_id;
   String supplier_name;
   String title;
   DateTime created_ts;

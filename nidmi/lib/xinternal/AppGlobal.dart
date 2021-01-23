@@ -114,8 +114,8 @@ class AppGlobal {
       currentLat = -79.0;
       currentLong = 43.0;
     }
-    officeLat = currentLat + 0.4;
-    officeLong = currentLong + 0.3;
+    officeLat = currentLat - 0.4;
+    officeLong = currentLong - 0.5;
 
     print('officeLat: ' + officeLat.toString());
     print('officeLong: '+ officeLong.toString());
@@ -421,7 +421,7 @@ String direction;
     return ([
       Request(
           request_id: 103,
-          owner_id: 1,
+          owner_id: 11,
           category: 'Cat01',
           latitude: 37.441234,
           longitude: -122.041234,
@@ -450,7 +450,7 @@ String direction;
           created_ts: dt.add(new Duration(minutes: -29))),
       Request(
           request_id: 105,
-          owner_id: 1,
+          owner_id: 11,
           category: 'Cat01',
           latitude: 37.461234,
           longitude: -122.061234,
@@ -480,7 +480,7 @@ String direction;
           created_ts: dt.add(new Duration(hours: -2))),
       Request(
           request_id: 108,
-          owner_id: 1,
+          owner_id: 11,
           category: 'Cat01',
           latitude: 37.491234,
           longitude: -122.091234,

@@ -1,7 +1,7 @@
 import 'dart:core';
 
 class LoginResponse {
-  num user_id;
+  int user_id;
   String email;
   String display_name;
   String access_token;

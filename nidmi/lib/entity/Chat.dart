@@ -1,9 +1,9 @@
 import 'dart:core';
 
 class Chat {
-  num chat_id;
-  num reply_id;
-  num owner_id;
+  int chat_id;
+  int reply_id;
+  int owner_id;
   String text;
   DateTime created_ts;
   DateTime updated_ts;

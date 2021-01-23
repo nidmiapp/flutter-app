@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import './main_screen.dart';
@@ -28,6 +28,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
         title: 'Flutter Demo',
         theme: AppGlobal().changeAppThemeColor(EnumNidmiTheme.Light),

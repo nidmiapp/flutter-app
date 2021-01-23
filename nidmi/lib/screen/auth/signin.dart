@@ -166,6 +166,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
           await AppGlobal.saveUserRefreshSharedPreference(result.refresh_token);
           await AppGlobal.saveUserNameSharedPreference(result.display_name);
           await AppGlobal.saveUserEmailSharedPreference(result.email);
+          await AppGlobal.saveUserIdSharedPreference(result.user_id.toString());
           await AppGlobal.saveUserExpiredSharedPreference(result.expires_at.toString());
           print('############### dvc.toString() ###########'+dvc.toString());
           await deviceService.httpPost(dvc, "/device")
@@ -197,6 +198,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
           AppGlobal.saveUserRefreshSharedPreference('');
           AppGlobal.saveUserNameSharedPreference('');
           AppGlobal.saveUserEmailSharedPreference('');
+          AppGlobal.saveUserIdSharedPreference('');
           AppGlobal.saveUserExpiredSharedPreference('');
           AppGlobal.saveDeviceUUidSharedPreference('');
           AppGlobal.saveDeviceTypeSharedPreference('');

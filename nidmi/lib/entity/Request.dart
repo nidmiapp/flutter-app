@@ -4,8 +4,8 @@ import 'dart:ffi';
 import '../entity/Lead.dart';
 
 class Request {
-  num request_id;
-  num owner_id;
+  int request_id;
+  int owner_id;
   String category;
   String sub_category;
   double latitude;

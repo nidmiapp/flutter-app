@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
-import 'package:nidmi/screen/request/lead_screen.dart';
+import 'package:nidmi/screen/request/lead_list_screen.dart';
 import 'package:nidmi/screen/request/request_list_screen.dart';
 import 'package:nidmi/screen/search/search.dart';
 
@@ -33,8 +33,15 @@ class MainScreenWidget extends StatefulWidget {
   _MainScreenWidgetState createState() => _MainScreenWidgetState();
 }
 
+mixin NamedRoute implements Widget {
+  String get routeName;
+}
+
 /// This is the private State class that goes with MainScreenWidget.
 class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMixin {
+  @override
+  String get routeName => '/MainScreen';
+
   int _selectedIndex = 0;
   String _appTitle = 'Leads';
   static const TextStyle optionStyle =
@@ -163,7 +170,7 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.request_quote),
+            icon: Icon(Icons.local_offer_outlined),
             label: 'Leads',
 
           ),
@@ -172,12 +179,12 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
             label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.request_quote_outlined),
+            icon: Icon(Icons.quick_contacts_dialer_outlined),
             label: 'Requests',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_box_outlined),
-            label: 'Account',
+            icon: Icon(Icons.import_contacts_sharp),
+            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,

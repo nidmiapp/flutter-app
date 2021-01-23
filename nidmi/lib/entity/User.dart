@@ -2,7 +2,7 @@ import 'dart:core';
 
 class User {
   String email;
-  num user_id;
+  int user_id;
   String name;
   String hash;
   String verify_code;

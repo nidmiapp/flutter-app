@@ -12,6 +12,9 @@ class LeadListScreen extends StatelessWidget {
   final VoidCallback onLayoutToggle;
 
   @override
+  String get routeName => '/LeadListScreen';
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
        body: Container(
@@ -21,6 +24,7 @@ class LeadListScreen extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
+    print('/LeadListScreen');
     return ListView.builder(
         itemCount: allLeads.length,
         itemBuilder: (BuildContext content, int index) {
@@ -45,15 +49,15 @@ return Card(
     child: Icon(
           Icons.person,
           size: 30,
-          color: Colors.yellow,
+          color: Colors.white,
           )),
       title: Text('${lead.title}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14) , maxLines: 3,),
       subtitle: Text( AppGlobal().distance(AppGlobal.officeLat, AppGlobal.officeLong, lead.latitude, lead.longitude) +
       '        '+diff, textAlign: TextAlign.end,style: TextStyle(color: Colors.lightBlueAccent, fontWeight: FontWeight.w300, fontSize: 12) ,),
       trailing: IconButton(
-        color: Colors.red,
+        color: Colors.grey,
         //splashColor: Colors.yellow,
-        icon: Icon(Icons.delete),
+        icon: Icon(Icons.delete_outlined),
         tooltip: 'Delete lead',
         onPressed: () {
         },
@@ -71,33 +75,6 @@ return Card(
   }
 }
 
-/*
-class LeadListTile extends ListTile {
-  LeadListTile(Lead lead, dist)
-      : super(
-    title: Text(
-      lead.title,
-      style: GoogleFonts.arimo(fontSize: 18),
-      maxLines: 3,
-      textDirection: TextDirection.ltr,
-    ),
-    subtitle: Text(
-      dist + '  timeDiff',
-      style: GoogleFonts.mada(fontSize: 14, fontWeight: FontWeight.w400),
-      textAlign: TextAlign.justify,
-    ),
-    leading: CircleAvatar(
-      child: Icon(
-        Icons.person,
-        color: Colors.yellow,
-      ),
-      radius: 25,
-      // child: Text(lead.owner_id.toString()[(lead.owner_id.toString().length-1)]),
-    ),
-  );
-}
-*/
-
 DateTime dt = DateTime.now();
 List<Lead> allLeads = [
   Lead(
@@ -106,8 +83,10 @@ List<Lead> allLeads = [
       category: 'Cat01',
       latitude: 37.138347,
       longitude: -121.73071489,
-      title:
-      'Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 ',
+      title:'Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 '
+          'Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 '
+          'Title3 Title3 Title3 Title3Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 '
+          'Title3 Title3 Title3 Title3 Title3 Title3 ',
       media: '{"media":'
           '["https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",'
           '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg",'
@@ -129,18 +108,23 @@ List<Lead> allLeads = [
       request_id: 105,
       owner_id: 1,
       category: 'Cat01',
-      latitude: 37.461234,
-      longitude: -122.061234,
+      latitude:  43.683047276,
+      longitude: -79.61406945,
       title: 'Title5',
-      media: '{"media":[]}',
+      media: '{"media":'
+          '["https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",'
+          '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg","https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",'
+          '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg","https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/beach-84533_640.jpg",'
+          '"https://kaleidosblog.s3-eu-west-1.amazonaws.com/flutter_gallery/brooklyn-bridge-1791001_640.jpg"]'
+          '}',
       confirmed: true,
       created_ts: dt.add(new Duration(minutes: -58))),
   Lead(
       request_id: 106,
       owner_id: 1,
       category: 'Cat01',
-      latitude: 37.471234,
-      longitude: -122.071234,
+      latitude:  43.8727723,
+      longitude:-79.7359128,
       title: 'Title6',
       media: '{"media":[]}',
       confirmed: true,
@@ -149,8 +133,8 @@ List<Lead> allLeads = [
       request_id: 107,
       owner_id: 1,
       category: 'Cat01',
-      latitude: 37.481234,
-      longitude: -122.081234,
+      latitude: 43.87461833912933,
+      longitude:  -79.39428813270607,
       title: 'Title7',
       media: '{"media":[]}',
       confirmed: true,
@@ -159,8 +143,8 @@ List<Lead> allLeads = [
       request_id: 108,
       owner_id: 1,
       category: 'Cat01',
-      latitude: 37.491234,
-      longitude: -122.091234,
+      latitude: 43.65162764394047,
+      longitude: -79.35951366104402,
       title: 'Title8',
       media: '{"media":[]}',
       confirmed: true,
@@ -169,8 +153,8 @@ List<Lead> allLeads = [
       request_id: 109,
       owner_id: 1,
       category: 'Cat01',
-      latitude: 37.41234,
-      longitude: -122.01234,
+      latitude: 43.54420079972753,
+      longitude:  -80.26196445167518,
       title: 'Title9',
       media: '{"media":[]}',
       confirmed: true,

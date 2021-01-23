@@ -1,8 +1,8 @@
 import 'dart:core';
 
 class Device {
-  num device_id;
-  num owner_id;
+  int device_id;
+  int owner_id;
   String device_unique_id;
   String token;
   String device_type;

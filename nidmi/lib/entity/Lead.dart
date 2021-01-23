@@ -5,8 +5,8 @@ import 'dart:ffi';
 import 'package:nidmi/entity/Request.dart';
 
 class Lead {
-  num request_id;
-  num owner_id;
+  int request_id;
+  int owner_id;
   String category;
   String sub_category;
   double latitude;
