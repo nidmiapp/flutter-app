@@ -128,7 +128,7 @@ class RequestDetailScreenState extends State<RequestDetailScreen> {
           ),
         ),
 
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             setState(() {
               replyMode = true;
@@ -137,7 +137,8 @@ class RequestDetailScreenState extends State<RequestDetailScreen> {
             });
             // Add your onPressed code here!
           },
-          child: Icon(Icons.reply),
+          icon: Icon(Icons.reply),
+          label: Text("Reply"),
           backgroundColor: Colors.deepOrange,
         )
     );

@@ -5,6 +5,7 @@ import 'package:nidmi/entity/Request.dart';
 import 'package:nidmi/screen/request/request_detail_screen.dart';
 import 'package:nidmi/xinternal/AppGlobal.dart';
 import '../../entity/Lead.dart';
+import 'create_request_screen.dart';
 
 class RequestListScreen extends StatefulWidget {
 
@@ -23,21 +24,22 @@ class RequestListScreenState extends State<RequestListScreen> {
       body: Container(
         child: _buildContent(context),
       ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add_outlined),
+        floatingActionButton: FloatingActionButton.extended(
+          icon: Icon(Icons.add_outlined),
+          label: Text("New"),
           backgroundColor: Colors.deepOrange,
           tooltip: "Send to requester",
           onPressed: () {
             print('FloatingActionButton tapped');
             print('/CreatRequestScreen');
-            // setState(() {
-              // Navigator.pushAndRemoveUntil(context,
-              //     MaterialPageRoute(
-              //         builder: (context) => CreateRequestScreen()
-              //     ),
-              //     ModalRoute.withName("/MainScreen")
-              // );
-//            });
+            setState(() {
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(
+                      builder: (context) => CreateRequestScreen()
+                  ),
+                  ModalRoute.withName("/MainScreen")
+              );
+           });
             // Add your onPressed code here!
           },
         )

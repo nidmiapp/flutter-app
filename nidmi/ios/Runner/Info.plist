@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>nidmi</string>
+	<string>Nidmi</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -49,5 +49,13 @@
     <string>Need location when in use</string>
     <key>NSLocationUsageDescription</key>
     <string>Older devices need location.</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allows you to choose a picture</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Allows you to take a picture</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allows you to record a voice</string>
+
 </dict>
 </plist>

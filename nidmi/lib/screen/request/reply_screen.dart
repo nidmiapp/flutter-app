@@ -157,8 +157,8 @@ Column(
           ),
 
 
-        floatingActionButton: FloatingActionButton(
-          mini: true,
+        floatingActionButton: FloatingActionButton.extended(
+         // mini: true,
           tooltip: "Send to requester",
           onPressed: () {
             setState(() {
@@ -174,7 +174,8 @@ Column(
             });
             // Add your onPressed code here!
           },
-          child: Icon(Icons.send_outlined),
+          icon: Icon(Icons.send_outlined),
+          label: Text("Send"),
           backgroundColor: Colors.deepOrange,
         )
     );
