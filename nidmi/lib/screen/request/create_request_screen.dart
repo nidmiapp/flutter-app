@@ -69,8 +69,6 @@ List<SubCategoryItem> subcategory = <SubCategoryItem>[
 
 
 //Request request = selectedRequest;
-final textController = TextEditingController();
-
 
 Request selectedRequest;
 class CreateRequestScreen extends StatefulWidget {
@@ -84,13 +82,16 @@ class CreateRequestScreenState extends State<CreateRequestScreen> {
   var diff = ' now';
   bool replyMode = false;
   String _appTitle = 'Request Detail';
+
+  final textController = TextEditingController();
+  List<Asset> images = new List.empty(growable: true);
+
   @override
   void initState() {
     super.initState();
     selectedRadio = 0;
   }
 
-  List<Asset> images = new List.empty(growable: true);
   String _error = 'No Error Dectected';
 
 
@@ -105,29 +106,29 @@ class CreateRequestScreenState extends State<CreateRequestScreen> {
     return GridView.count(
       scrollDirection: Axis.vertical,
       //crossAxisCount: 2,
-      crossAxisSpacing: 1.1,
-      mainAxisSpacing: 1.1,
+      crossAxisSpacing: 3,
+      mainAxisSpacing: 3,
       shrinkWrap: true,
-      crossAxisCount: 3,
-      children: List.generate(images.length, (index) {
+      crossAxisCount: 2,
+      children: List.generate((images!=null)?images.length: 0, (index) {
         Asset asset = images[index];
         return AssetThumb(
           asset: asset,
-          width: 300,
-          height: 300,
+          width: 200,
+          height: 200,
         );
       }),
     );
   }
 
   Future<void> loadAssets() async {
-    List<Asset> resultList = List<Asset>();
+    List<Asset> resultList;
     String error = 'No Error Dectected';
 
     try {
       print('loadAssets');
       resultList = await MultiImagePicker.pickImages(
-        maxImages: 300,
+        maxImages: 4,
         enableCamera: true,
         selectedAssets: images,
         cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
@@ -155,7 +156,58 @@ class CreateRequestScreenState extends State<CreateRequestScreen> {
     });
   }
 
+  backPressed(BuildContext context) {
+//    setState(() {
+      showAlertDialog(context);
+  //  });
+  }
 
+
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget saveButton = FlatButton(
+        child: Text("Save"),
+        onPressed: () =>
+        {
+          Navigator.of(context, rootNavigator: true).pop(),
+          Navigator.pop(context)
+        }
+    );
+    Widget cancelButton = FlatButton(
+        child: Text("Cancel"),
+        onPressed:  () => {
+          Navigator.of(context, rootNavigator: true).pop(),
+        }
+    );
+    Widget dontSaveButton = FlatButton(
+      child: Text("Discard"),
+      onPressed:  () => {
+        textController.text = '',
+        images = List.empty(growable: true),
+        Navigator.of(context, rootNavigator: true).pop(),
+        Navigator.pop(context)
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Alert"),
+      content: Text("You added some data"),
+      actions: [
+        saveButton,
+        cancelButton,
+        dontSaveButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
 
 
@@ -168,7 +220,7 @@ class CreateRequestScreenState extends State<CreateRequestScreen> {
           title: Text(_appTitle),
           leading: new IconButton(
             icon: new Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context) ,
+            onPressed: () => backPressed(context),
           ),
         ),
         body:
@@ -256,61 +308,69 @@ class CreateRequestScreenState extends State<CreateRequestScreen> {
                   ),
                 ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Spacer(),
-                    Radio(
-                      value: 0,
-                      groupValue: selectedRadio,
-                      toggleable: true,
-                      activeColor: Colors.green,
-                      onChanged: (val) {
-                        print("Radio $val");
-                        setSelectedRadio(val);
-                      },
-                    ),
-                    Text(
-                      'Current Location',
-                      style: TextStyle(fontSize: 9.0),
-                    ),
-                    Spacer(),
-                    Radio(
-                      value: 1,
-                      groupValue: selectedRadio,
-                      toggleable: true,
-                      activeColor: Colors.green,
-                      onChanged: (val) {
-                        print("Radio $val");
-                        setSelectedRadio(val);
-                      },
-                    ),
-                    Text(
-                      'Pick address from map',
-                      style: TextStyle(fontSize: 9.0,
-                      ),
-                    ),
-                    Spacer(),
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //   children: <Widget>[
+                //     Spacer(),
+                //     Radio(
+                //       value: 0,
+                //       groupValue: selectedRadio,
+                //       toggleable: true,
+                //       activeColor: Colors.green,
+                //       onChanged: (val) {
+                //         print("Radio $val");
+                //         setSelectedRadio(val);
+                //       },
+                //     ),
+                //     Text(
+                //       'Current Location',
+                //       style: TextStyle(fontSize: 9.0),
+                //     ),
+                //     Spacer(),
+                //     Radio(
+                //       value: 1,
+                //       groupValue: selectedRadio,
+                //       toggleable: true,
+                //       activeColor: Colors.green,
+                //       onChanged: (val) {
+                //         print("Radio $val");
+                //         setSelectedRadio(val);
+                //       },
+                //     ),
+                //     Text(
+                //       'Pick address from map',
+                //       style: TextStyle(fontSize: 9.0,
+                //       ),
+                //     ),
+                //     Spacer(),
+                //   ],
+                // ),
+                Padding(padding: EdgeInsets.fromLTRB(5,5,5,5),
+                  child:
       Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-                Text('Pick your images:'),
-                IconButton(
-                  tooltip: 'Pick image',
-                  alignment: Alignment.topRight,
-                  iconSize: 50,
-                  color: Colors.deepOrange,
-                  splashColor: Colors.grey,
-                  icon: Icon(Icons.image_outlined,),
-                  onPressed: () {
-                    setState(() {
-                      loadAssets;
-                    });
-                  },
-                ),
-    ]),
+            CircleAvatar(
+              backgroundColor: Colors.greenAccent,
+              radius: 25,
+              child: IconButton(
+                tooltip: 'Pick image',
+                alignment: Alignment.center,
+                iconSize: 28,
+                color: Colors.white,
+                splashColor: Colors.grey,
+                icon: Icon(Icons.image_outlined,),
+                onPressed: () {
+                  setState(() {
+                    images = List.empty(growable: true);
+                    loadAssets();
+                  });
+                },
+              ),),
+//            Spacer(),
+          ]
+      ),),
                 Flexible(
                   child: buildGridView(),
                 )
@@ -323,7 +383,7 @@ class CreateRequestScreenState extends State<CreateRequestScreen> {
             setState(() {
               replyMode = true;
               print('FloatingActionButton tapped');
-  //            Navigator.push(context, MaterialPageRoute(builder: (context) => ReplyScreen(selectedRequest)));
+              Navigator.pop(context);
             });
             // Add your onPressed code here!
           },
@@ -341,5 +401,3 @@ class CreateRequestScreenState extends State<CreateRequestScreen> {
 // }
 
 }
-
-

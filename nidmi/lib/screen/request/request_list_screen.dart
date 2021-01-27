@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:nidmi/entity/Request.dart';
 import 'package:nidmi/screen/request/request_detail_screen.dart';
+import 'package:nidmi/screen/request/request_replies_screen.dart';
 import 'package:nidmi/xinternal/AppGlobal.dart';
 import '../../entity/Lead.dart';
 import 'create_request_screen.dart';
@@ -33,12 +34,7 @@ class RequestListScreenState extends State<RequestListScreen> {
             print('FloatingActionButton tapped');
             print('/CreatRequestScreen');
             setState(() {
-              Navigator.pushAndRemoveUntil(context,
-                  MaterialPageRoute(
-                      builder: (context) => CreateRequestScreen()
-                  ),
-                  ModalRoute.withName("/MainScreen")
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CreateRequestScreen()));
            });
             // Add your onPressed code here!
           },
@@ -59,12 +55,13 @@ class RequestListScreenState extends State<RequestListScreen> {
           if (dt.difference(request.created_ts).inSeconds < 60)
             diff = ' now';
           else if (dt.difference(request.created_ts).inMinutes < 60)
-            diff = dt.difference(request.created_ts).inMinutes.toString() + ' m';
+            diff = dt.difference(request.created_ts).inMinutes.toString() + ' min';
           else if (dt.difference(request.created_ts).inHours < 24)
-            diff = dt.difference(request.created_ts).inHours.toString() + ' h';
-          else
-            diff = dt.difference(request.created_ts).inDays.toString() + ' d';
-
+            diff = dt.difference(request.created_ts).inHours.toString() + ' hrs';
+          else {
+            var day = dt.difference(request.created_ts).inDays;
+            diff = day.toString() + (day > 1 ? ' days' : ' day');
+          }
           if(request.owner_id==usrid)
             clr = Colors.white;
           else
@@ -96,8 +93,9 @@ print(request.owner_id.toString() + '   ' + usrid.toString());
                 ),
                 onTap: () {
                   print('RequestReplyScreen or ChatScreen');
-                //   if(request.owner_id==int.parse(AppGlobal.getUserIdSharedPreference()))
-                //      Navigator.push(context, MaterialPageRoute(builder: (context) => RequestReplyScreen(request)));
+                  int usrid = int.parse(AppGlobal.getUserIdSharedPreference()==null?"7":AppGlobal.getUserIdSharedPreference());
+                  if(request.owner_id==usrid)
+                     Navigator.push(context, MaterialPageRoute(builder: (context) => RequestRepliesScreen(request)));
                 //   else
                 //      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(request)));
                  },

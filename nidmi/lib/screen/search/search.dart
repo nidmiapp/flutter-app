@@ -130,13 +130,13 @@ class SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-      home:  Scaffold(
+    return Scaffold(
         resizeToAvoidBottomInset: false,
         body:
-        SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
+        // SingleChildScrollView(
+        //   scrollDirection: Axis.vertical,
+        //   child:
+        Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(
@@ -333,7 +333,7 @@ class SearchScreenState extends State<SearchScreen> {
                           }).toList(),
                         ),
                         DropdownButton<LocationItem>(
-                          hint:  Text("Select location"),
+                          hint: Text("Select location"),
                           value: selectedLocation,
                           onChanged: (LocationItem value) {
                             setState(() {
@@ -382,17 +382,17 @@ class SearchScreenState extends State<SearchScreen> {
                     },
                   ),
                 ),
-
-
 //////////////////
-                SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child:
-                    Container(
-                      child:
                       searchResult.isNotEmpty
                           ?
-                      ListView.builder(
+                      SingleChildScrollView(
+                          padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
+                          scrollDirection: Axis.vertical,
+                          child:
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                          ListView.builder(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           itemCount: searchResult.length,
@@ -404,12 +404,13 @@ class SearchScreenState extends State<SearchScreen> {
                             if (dt.difference(request.created_ts).inSeconds < 60)
                               diff = ' now';
                             else if (dt.difference(request.created_ts).inMinutes < 60)
-                              diff = dt.difference(request.created_ts).inMinutes.toString() + ' m';
+                              diff = dt.difference(request.created_ts).inMinutes.toString() + ' min';
                             else if (dt.difference(request.created_ts).inHours < 24)
-                              diff = dt.difference(request.created_ts).inHours.toString() + ' h';
-                            else
-                              diff = dt.difference(request.created_ts).inDays.toString() + ' d';
-
+                              diff = dt.difference(request.created_ts).inHours.toString() + ' hrs';
+                            else {
+                              var day = dt.difference(request.created_ts).inDays;
+                              diff = day.toString() + (day > 1 ? ' days' : ' day');
+                            }
                             return Card(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -435,22 +436,24 @@ class SearchScreenState extends State<SearchScreen> {
                                 ),
                               ),
                             );
-                          })/////////////////
+                          }
+                          ),
+                      ])/////////////////
 
-                          :
+                )
+                    :
                       Text(
                         ' Search list is empty ',
                         style:  TextStyle(color: Colors.black),
                       ),
-                    )
-                )
+                   // ),
+
 ////////////////)
 
               ]
           ),
-        ),
+ //       ),
 
-      ),
     );
   }
 }

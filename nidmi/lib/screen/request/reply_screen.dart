@@ -36,11 +36,11 @@ class ReplyScreenState extends State<ReplyScreen> {
 // Declare this variable
   int selectedRadio;
   int _selectedIndex = 0;
-  int supplier_id = int.parse(AppGlobal.getUserIdSharedPreference()==null ? "-1" : AppGlobal.getUserIdSharedPreference() );
+  int supplier_id = int.parse(AppGlobal.getUserIdSharedPreference()==null ? "11" : AppGlobal.getUserIdSharedPreference() );
   bool flag = true;
   var diff = ' now';
   bool replyMode = false;
-  String _appTitle = 'Request Detail';
+  String _appTitle = 'Reply';
   @override
   void initState() {
     super.initState();
@@ -54,12 +54,13 @@ class ReplyScreenState extends State<ReplyScreen> {
     if (dt.difference(selectedRequest.created_ts).inSeconds < 60)
       diff = ' now';
     else if (dt.difference(selectedRequest.created_ts).inMinutes < 60)
-      diff = dt.difference(selectedRequest.created_ts).inMinutes.toString() + ' m';
+      diff = dt.difference(selectedRequest.created_ts).inMinutes.toString() + ' min';
     else if (dt.difference(selectedRequest.created_ts).inHours < 24)
-      diff = dt.difference(selectedRequest.created_ts).inHours.toString() + ' h';
-    else
-      diff = dt.difference(selectedRequest.created_ts).inDays.toString() + ' d';
-
+      diff = dt.difference(selectedRequest.created_ts).inHours.toString() + ' hrs';
+    else {
+      var day = dt.difference(selectedRequest.created_ts).inDays;
+      diff = day.toString() + (day > 1 ? ' days' : ' day');
+    }
     List<String> urls = AppGlobal().parsedUrls(selectedRequest.media);
     urls!=null ? print('urls not null') : print('urls null');
     print(urls);

@@ -26,6 +26,7 @@ class LeadListScreen extends StatelessWidget {
   Widget _buildContent(BuildContext context) {
     print('/LeadListScreen');
     return ListView.builder(
+      padding:  const EdgeInsets.only(left: 1.0 ,top: 0.0, right: 1.0, bottom: 1.0),
         itemCount: allLeads.length,
         itemBuilder: (BuildContext content, int index) {
           Lead lead = allLeads[index];
@@ -35,13 +36,17 @@ class LeadListScreen extends StatelessWidget {
           if (dt.difference(lead.created_ts).inSeconds < 60)
             diff = ' now';
           else if (dt.difference(lead.created_ts).inMinutes < 60)
-            diff = dt.difference(lead.created_ts).inMinutes.toString() + ' m';
+            diff = dt.difference(lead.created_ts).inMinutes.toString() + ' min';
           else if (dt.difference(lead.created_ts).inHours < 24)
-            diff = dt.difference(lead.created_ts).inHours.toString() + ' h';
-          else
-            diff = dt.difference(lead.created_ts).inDays.toString() + ' d';
-
-return Card(
+            diff = dt.difference(lead.created_ts).inHours.toString() + ' hrs';
+          else {
+            var day = dt.difference(lead.created_ts).inDays;
+            diff = day.toString() + (day > 1 ? ' days' : ' day');
+          }
+return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+          child:
+          Card(
   child: Padding(
     padding: const EdgeInsets.symmetric(vertical: 4.0),
     child: ListTile(
@@ -70,7 +75,7 @@ return Card(
       },
     ),
   ),
-);
+          ),);
         });
   }
 }
