@@ -18,7 +18,7 @@ class LeadListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white10,
-       body: Container(
+      body: Container(
         child: _buildContent(context),
       ),
     );
@@ -27,7 +27,7 @@ class LeadListScreen extends StatelessWidget {
   Widget _buildContent(BuildContext context) {
     print('/LeadListScreen');
     return ListView.builder(
-      padding:  const EdgeInsets.only(top: 8),
+        padding: const EdgeInsets.only(top: 8),
         itemCount: allLeads.length,
         itemBuilder: (BuildContext content, int index) {
           Lead lead = allLeads[index];
@@ -44,48 +44,61 @@ class LeadListScreen extends StatelessWidget {
             var day = dt.difference(lead.created_ts).inDays;
             diff = day.toString() + (day > 1 ? ' days' : ' day');
           }
-return
-  Padding(
-  //             padding: const EdgeInsets.only(bottom: 0, top: 0),
-  //         child:
-  //         Card(
-  // child:
-  // Padding(
-    padding: const EdgeInsets.symmetric(vertical: 1.0),
-    child:
-    ListTile(
-      tileColor: Colors.white,
-      leading: CircleAvatar(
-        radius: 35,
-    child: Icon(
-          Icons.person,
-          size: 40,
-          color: Colors.white,
-          )),
-      title: Padding (padding: const EdgeInsets.symmetric(vertical: 4.0,),
-          child: Text('${lead.title}',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14) , maxLines: 3,)),
-      subtitle:  Padding (padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Text( AppGlobal().distance(AppGlobal.officeLat, AppGlobal.officeLong, lead.latitude, lead.longitude) +
-      '        '+diff, textAlign: TextAlign.end,style: TextStyle(color: Colors.lightBlueAccent, fontWeight: FontWeight.w300, fontSize: 12) ,)),
-      trailing: IconButton(
-        color: Colors.grey,
-        //splashColor: Colors.yellow,
-        icon: Icon(Icons.delete_outlined),
-        tooltip: 'Delete lead',
-        onPressed: () {
-        },
-      ),
-      onTap: () {
-        print('Issue tile tapped');
-        Request request = new Request();
-        request.copyLead(lead);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => RequestDetailScreen(request)));
-      },
-    ),
-  // ),
-  //         ),
-);
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 1.0),
+            child: ListTile(
+              tileColor: Colors.white,
+              leading: CircleAvatar(
+                  radius: 35,
+                  child: Icon(
+                    Icons.person,
+                    size: 40,
+                    color: Colors.white,
+                  )),
+              title: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4.0,
+                  ),
+                  child: Text(
+                    '${lead.title}',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    maxLines: 3,
+                  )),
+              subtitle: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Text(
+                    AppGlobal().distance(
+                            AppGlobal.officeLat,
+                            AppGlobal.officeLong,
+                            lead.latitude,
+                            lead.longitude) +
+                        '        ' +
+                        diff,
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                        color: Colors.lightBlueAccent,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 12),
+                  )),
+              trailing: IconButton(
+                color: Colors.grey,
+                icon: Icon(Icons.delete_outlined),
+                tooltip: 'Delete lead',
+                onPressed: () {},
+              ),
+              onTap: () {
+                print('Issue tile tapped');
+                Request request = new Request();
+                request.copyLead(lead);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RequestDetailScreen(request)));
+              },
+            ),
+            // ),
+            //         ),
+          );
         });
   }
 }
@@ -98,7 +111,8 @@ List<Lead> allLeads = [
       category: 'Cat01',
       latitude: 37.138347,
       longitude: -121.73071489,
-      title:'Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 '
+      title:
+          'Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 '
           'Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 '
           'Title3 Title3 Title3 Title3Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 '
           'Title3 Title3 Title3 Title3 Title3 Title3 ',
@@ -116,14 +130,15 @@ List<Lead> allLeads = [
       latitude: 37.451234,
       longitude: -122.051234,
       title: 'Title4',
-      media: '{"media":["https://picsum.photos/200/300?random=2","https://picsum.photos/200/300?random=1","https://picsum.photos/200/300?random=2"]}',
+      media:
+          '{"media":["https://picsum.photos/200/300?random=2","https://picsum.photos/200/300?random=1","https://picsum.photos/200/300?random=2"]}',
       confirmed: true,
       created_ts: dt.add(new Duration(minutes: -29))),
   Lead(
       request_id: 105,
       owner_id: 1,
       category: 'Cat01',
-      latitude:  43.683047276,
+      latitude: 43.683047276,
       longitude: -79.61406945,
       title: 'Title5',
       media: '{"media":'
@@ -138,8 +153,8 @@ List<Lead> allLeads = [
       request_id: 106,
       owner_id: 1,
       category: 'Cat01',
-      latitude:  43.8727723,
-      longitude:-79.7359128,
+      latitude: 43.8727723,
+      longitude: -79.7359128,
       title: 'Title6',
       media: '{"media":[]}',
       confirmed: true,
@@ -149,7 +164,7 @@ List<Lead> allLeads = [
       owner_id: 1,
       category: 'Cat01',
       latitude: 43.87461833912933,
-      longitude:  -79.39428813270607,
+      longitude: -79.39428813270607,
       title: 'Title7',
       media: '{"media":[]}',
       confirmed: true,
@@ -169,7 +184,7 @@ List<Lead> allLeads = [
       owner_id: 1,
       category: 'Cat01',
       latitude: 43.54420079972753,
-      longitude:  -80.26196445167518,
+      longitude: -80.26196445167518,
       title: 'Title9',
       media: '{"media":[]}',
       confirmed: true,
@@ -204,7 +219,7 @@ List<Lead> allLeads = [
       media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -3))),
- Lead(
+  Lead(
       request_id: 114,
       owner_id: 1,
       category: 'Cat01',
@@ -274,5 +289,4 @@ List<Lead> allLeads = [
       media: '{"media":[]}',
       confirmed: true,
       created_ts: dt.add(new Duration(days: -15)))
-
 ];
