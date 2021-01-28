@@ -17,6 +17,7 @@ class LeadListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white10,
        body: Container(
         child: _buildContent(context),
       ),
@@ -26,7 +27,7 @@ class LeadListScreen extends StatelessWidget {
   Widget _buildContent(BuildContext context) {
     print('/LeadListScreen');
     return ListView.builder(
-      padding:  const EdgeInsets.only(left: 1.0 ,top: 0.0, right: 1.0, bottom: 1.0),
+      padding:  const EdgeInsets.only(top: 8),
         itemCount: allLeads.length,
         itemBuilder: (BuildContext content, int index) {
           Lead lead = allLeads[index];
@@ -43,22 +44,30 @@ class LeadListScreen extends StatelessWidget {
             var day = dt.difference(lead.created_ts).inDays;
             diff = day.toString() + (day > 1 ? ' days' : ' day');
           }
-return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-          child:
-          Card(
-  child: Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4.0),
-    child: ListTile(
+return
+  Padding(
+  //             padding: const EdgeInsets.only(bottom: 0, top: 0),
+  //         child:
+  //         Card(
+  // child:
+  // Padding(
+    padding: const EdgeInsets.symmetric(vertical: 1.0),
+    child:
+    ListTile(
+      tileColor: Colors.white,
       leading: CircleAvatar(
+        radius: 35,
     child: Icon(
           Icons.person,
-          size: 30,
+          size: 40,
           color: Colors.white,
           )),
-      title: Text('${lead.title}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14) , maxLines: 3,),
-      subtitle: Text( AppGlobal().distance(AppGlobal.officeLat, AppGlobal.officeLong, lead.latitude, lead.longitude) +
-      '        '+diff, textAlign: TextAlign.end,style: TextStyle(color: Colors.lightBlueAccent, fontWeight: FontWeight.w300, fontSize: 12) ,),
+      title: Padding (padding: const EdgeInsets.symmetric(vertical: 4.0,),
+          child: Text('${lead.title}',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14) , maxLines: 3,)),
+      subtitle:  Padding (padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Text( AppGlobal().distance(AppGlobal.officeLat, AppGlobal.officeLong, lead.latitude, lead.longitude) +
+      '        '+diff, textAlign: TextAlign.end,style: TextStyle(color: Colors.lightBlueAccent, fontWeight: FontWeight.w300, fontSize: 12) ,)),
       trailing: IconButton(
         color: Colors.grey,
         //splashColor: Colors.yellow,
@@ -74,8 +83,9 @@ return Padding(
         Navigator.push(context, MaterialPageRoute(builder: (context) => RequestDetailScreen(request)));
       },
     ),
-  ),
-          ),);
+  // ),
+  //         ),
+);
         });
   }
 }
