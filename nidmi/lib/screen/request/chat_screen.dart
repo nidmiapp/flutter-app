@@ -60,6 +60,7 @@ class ChatScreenState extends State<ChatScreen> {
   var _enteredMessage = '';
   void _sendMessage() async {
     FocusScope.of(context).unfocus();
+    print(_enteredMessage);
     _controller.clear();
   }
 
@@ -94,7 +95,10 @@ class ChatScreenState extends State<ChatScreen> {
       // Column(
       //   children: [
 Container(child:
-      ListView.builder(
+Column(
+    children: <Widget>[
+Expanded(
+child: ListView.builder(
           reverse: true,
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
@@ -173,6 +177,45 @@ Container(child:
             );
           }
           ),
+),
+
+      Container(
+        color: Colors.white,
+        margin: EdgeInsets.only(top: 4, bottom: 8),
+        padding: EdgeInsets.all(4),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: TextField(
+                controller: _controller,
+                textCapitalization: TextCapitalization.sentences,
+                autocorrect: true,
+                enableSuggestions: true,
+                decoration: InputDecoration(labelText: 'Send a message...'),
+                onChanged: (value) {
+ //                 setState(() {
+                    _enteredMessage = value;
+   //               });
+                },
+              ),
+            ),
+            IconButton(
+              color: Theme.of(context).primaryColor,
+              icon: Icon(
+                Icons.send,
+                color: Colors.indigo,
+              ),
+              onPressed: _enteredMessage.trim().isEmpty ? null : _sendMessage,
+            ),
+          ],
+        ),
+      ),
+
+
+    ],
+),
+
+
 ),
 
 

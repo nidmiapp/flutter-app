@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
+import 'package:nidmi/screen/account/account_screen.dart';
 import 'package:nidmi/screen/request/lead_list_screen.dart';
 import 'package:nidmi/screen/request/request_list_screen.dart';
 import 'package:nidmi/screen/search/search.dart';
@@ -184,7 +185,7 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.import_contacts_sharp),
-            label: 'Profile',
+            label: 'Account',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -215,6 +216,11 @@ class _MainScreenWidgetState extends State<MainScreenWidget>  with RestorationMi
           _appTitle = 'Requests';
         });
         return RequestListScreen();
+      case 3:
+        setState(() {
+          _appTitle = 'Account Info';
+        });
+        return AccountScreen();
     }
 
   }
