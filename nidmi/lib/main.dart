@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
+     // DeviceOrientation.portraitDown,
     ]);
     return MaterialApp(
         title: 'Flutter Demo',
@@ -51,6 +51,7 @@ class Configure extends StatelessWidget{
     printer: PrettyPrinter(),
   );
   var getUserNameSharedPreference = AppGlobal.getUserNameSharedPreference();
+  var getUserIdSharedPreference = AppGlobal.getUserIdSharedPreference();
   var getUserEmailSharedPreference = AppGlobal.getUserEmailSharedPreference();
   var getUserAccessSharedPreference = AppGlobal.getUserAccessSharedPreference();
   var getUserRefreshSharedPreference = AppGlobal.getUserRefreshSharedPreference();
@@ -63,10 +64,14 @@ class Configure extends StatelessWidget{
     _Configure(context);
   }
   _Configure(BuildContext context) {
-    logger.i('\n  getUserNameSharedPreference:====>>>' +
+    logger.i('\nmain.dart:\n  getUserNameSharedPreference:====>>>' +
         (getUserNameSharedPreference == null
             ? 'null'
             : getUserNameSharedPreference) +
+        '\n  getUserIdSharedPreference:====>>>' +
+        (getUserIdSharedPreference == null
+            ? 'null'
+            : getUserIdSharedPreference) +
         '\n  getUserEmailSharedPreference:===>>>' +
         (getUserEmailSharedPreference == null
             ? 'null'
@@ -100,7 +105,7 @@ class Configure extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     Timer(
-        Duration(seconds: 3),
+        Duration(milliseconds: 1500),
             () => (getUserEmailSharedPreference == null || isUserExpiredSharedPreference == null)
                 ?
             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Splash()))

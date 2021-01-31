@@ -36,7 +36,7 @@ class ReplyScreenState extends State<ReplyScreen> {
 // Declare this variable
   int selectedRadio;
   int _selectedIndex = 0;
-  int supplier_id = int.parse(AppGlobal.getUserIdSharedPreference()==null ? "11" : AppGlobal.getUserIdSharedPreference() );
+  int supplier_id = int.parse(AppGlobal.getUserIdSharedPreference()==null ? "7" : AppGlobal.getUserIdSharedPreference() );
   bool flag = true;
   var diff = ' now';
   bool replyMode = false;

@@ -207,7 +207,8 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen()));
 
         logger.i(
-            '\n  getUserNameSharedPreference:====>>>'+  AppGlobal.getUserNameSharedPreference()+
+            '\nsignin.dart:\n  getUserNameSharedPreference:====>>>'+  AppGlobal.getUserNameSharedPreference()+
+                '\n  getUserIdSharedPreference:===>>>'+ AppGlobal.getUserIdSharedPreference()+
                 '\n  getUserEmailSharedPreference:===>>>'+ AppGlobal.getUserEmailSharedPreference()+
                 '\n  getUserAccessSharedPreference:==>>>'+ AppGlobal.getUserAccessSharedPreference()+
                 '\n  getUserRefreshSharedPreference:=>>>'+ AppGlobal.getUserRefreshSharedPreference()+

@@ -171,7 +171,7 @@ class RequestRepliesScreenState extends State<RequestRepliesScreen> {
                                   var day = dt.difference(reply.created_ts).inDays;
                                   diff = day.toString() + (day > 1 ? ' days' : ' day');
                                 }
-                                print('reply.request_id: ' + reply.request_id.toString());
+                                print('reply.request_id: ' + reply.request_id.toString() + 'reply.reply_id: ' + reply.reply_id.toString());
                                 return Card(
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 4.0),

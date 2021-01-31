@@ -657,7 +657,7 @@ class AppGlobal {
       Reply(
           reply_id: 4,
           request_id: 104,
-          supplier_id: 13,
+          supplier_id: 1,
           supplier_name: 'Supplier 13',
           title:
           'replied Title4 Title4 by Supplier 13   Title4 Title4 Title4 Title4 Title4 Title4 Title4 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 ',
@@ -680,6 +680,22 @@ class AppGlobal {
           created_ts: DateTime.now()),
       Reply(
           reply_id: 7,
+          request_id: 103,
+          supplier_id: 7,
+          supplier_name: 'Supplier 17',
+          title:
+          'replied Title3 Title3 by Supplier 17   Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 ',
+          created_ts: DateTime.now()),
+      Reply(
+          reply_id: 8,
+          request_id: 103,
+          supplier_id: 7,
+          supplier_name: 'Supplier 17',
+          title:
+          'replied Title3 Title3 by Supplier 17   Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 Title3 ',
+          created_ts: DateTime.now()),
+      Reply(
+          reply_id: 9,
           request_id: 103,
           supplier_id: 18,
           supplier_name: 'Supplier 18',

@@ -1,7 +1,9 @@
 import 'dart:ffi';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:nidmi/entity/Reply.dart';
 import 'package:nidmi/entity/Request.dart';
+import 'package:nidmi/screen/request/chat_screen.dart';
 import 'package:nidmi/screen/request/request_detail_screen.dart';
 import 'package:nidmi/screen/request/request_replies_screen.dart';
 import 'package:nidmi/xinternal/AppGlobal.dart';
@@ -68,7 +70,7 @@ class RequestListScreenState extends State<RequestListScreen> {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 1.0),
             child: ListTile(
-              tileColor: Colors.white,
+              tileColor: request.owner_id==usrid ? Colors.white : Colors.green[100],
               leading: CircleAvatar(
                   radius: 35,
                   child: Icon(
@@ -108,12 +110,22 @@ class RequestListScreenState extends State<RequestListScreen> {
                 onPressed: () {},
               ),
               onTap: () {
-                print('RequestReplyScreen or ChatScreen');
-                int usrid = int.parse(AppGlobal.getUserIdSharedPreference()==null?"7":AppGlobal.getUserIdSharedPreference());
-                if(request.owner_id==usrid)
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => RequestRepliesScreen(request)));
-//   else
-//      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(request)));
+          int usrid = int.parse(AppGlobal.getUserIdSharedPreference()==null?"7":AppGlobal.getUserIdSharedPreference());
+          if(request.owner_id==usrid){
+          print('====>>>>> Call RequestRepliesScreen request_id: '+request.request_id.toString()+' usrid: '+ usrid.toString());
+          Navigator.push(context, MaterialPageRoute(builder: (context) => RequestRepliesScreen(request)));
+          }
+                else {
+                  Reply reply = AppGlobal().readReply()
+                      .where(
+                          (item)=>(
+                              item.request_id==request.request_id &&
+                              item.supplier_id == request.owner_id
+                          )).first;
+                  print('====>>>>> Call ChatScreen owner_id: '+request.owner_id.toString()+' usrid: '+ usrid.toString()+' reply_id: '+ reply.reply_id.toString());
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => ChatScreen(reply)));
+                }
               },
             ),
             // ),
@@ -121,6 +133,7 @@ class RequestListScreenState extends State<RequestListScreen> {
           );
         });
   }
+
 }
 
 
