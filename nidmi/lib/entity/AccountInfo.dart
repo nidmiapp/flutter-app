@@ -7,6 +7,7 @@ class AccountInfo {
   String business_title;
   String business_email;
   String business_website;
+  String business_images;
   String category;
   String sub_category;
   String expertise_list;
@@ -31,6 +32,7 @@ class AccountInfo {
     this.business_title,
     this.business_email,
     this.business_website,
+    this.business_images,
     this.category,
     this.sub_category,
     this.expertise_list,
@@ -63,6 +65,7 @@ class AccountInfo {
         business_title : json['business_title'] ?? '',
         business_email : json['business_email'] ?? '',
         business_website : json['business_website'] ?? '',
+        business_images : json['business_images'] ?? '',
         category : json['category'] ?? '',
         sub_category : json['sub_category'] ?? '',
         expertise_list : json['expertise_list'] ?? '',

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:nidmi/main_screen.dart';
+import 'package:nidmi/widget/logoScreenBckgrnd.dart';
 
 import 'auth/signin.dart';
 import '../xinternal/AppGlobal.dart';
@@ -24,13 +25,8 @@ class Splash extends StatelessWidget {
       body:Container(
         alignment: Alignment.center,
         child:
-        Stack(
-            alignment: AlignmentDirectional.center,
-            children: <Widget>[
-              Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
-              Image.asset("assets/images/NidmiLogo-HandShake-new2-logo256.png",width: 220, height: 220,),
-            ]
-        ),      ),
+        LogoScreenBckgrnd(220, 220),
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:logger/logger.dart';
 import 'package:nidmi/entity/Device.dart';
 import 'package:nidmi/service/deviceSvc.dart';
+import 'package:nidmi/widget/logoScreenBckgrnd.dart';
 
 import '../../main_screen.dart';
 import 'forgot.dart';
@@ -245,13 +246,7 @@ class TextFormFieldSigninState extends State<TextFormFieldSignin> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Stack(
-                  alignment: AlignmentDirectional.center,
-                  children: <Widget>[
-                    Image.asset("assets/images/BlkWt-large-group-of-people-1300X1300.png",),
-                    Image.asset("assets/images/NidmiLogo-HandShake-new2-logo256.png",width: 220, height: 220,),
-                  ]
-                ),
+                LogoScreenBckgrnd(220, 220),
                 sizedBoxSpace,
                 TextFormField(
                   decoration: InputDecoration(
