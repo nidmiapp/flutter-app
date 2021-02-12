@@ -1,12 +1,14 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:nidmi/entity/Request.dart';
 import 'package:nidmi/screen/request/reply_screen.dart';
+import 'package:nidmi/widget/logoScreenBckgrnd.dart';
 import 'package:nidmi/xinternal/AppGlobal.dart';
 import 'package:http/http.dart' as http;
 
@@ -220,13 +222,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       },
     );
   }
-
+  IconData _selectedIcon;
 
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: Colors.indigo[50],
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text(_appTitle),
@@ -242,6 +245,32 @@ class EditProfileScreenState extends State<EditProfileScreen> {
             mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
+                Padding(padding: EdgeInsets.fromLTRB(5,2,5,2),
+                  child:
+                  ProfileImage(200,200),
+                ),
+                Padding(padding: EdgeInsets.fromLTRB(5,20,5,20),
+                  child: RatingBar.builder(
+                    initialRating: 2.5,
+                    minRating: 0,
+                    direction: Axis.horizontal,//_isVertical ? Axis.vertical : Axis.horizontal,
+                    allowHalfRating: true,
+                    unratedColor: Colors.amber.withAlpha(50),
+                    itemCount: 5,
+                    itemSize: 40.0,
+                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                    itemBuilder: (context, _) => Icon(
+                      _selectedIcon ?? Icons.star,
+                      color: Colors.amber,
+                    ),
+                    onRatingUpdate: (rating) {
+                      setState(() {
+                        // _rating = rating;
+                      });
+                    },
+                    updateOnDrag: true,
+                  ),
+                ),
                 Padding(padding: EdgeInsets.fromLTRB(5,2,5,2),
                   child: TextField(
                     maxLines: 1,
@@ -375,80 +404,57 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                 Padding(padding: EdgeInsets.fromLTRB(5,2,5,2),
                   child: TextField(
                     maxLines: 1,
-                    maxLength: 100,
-                    controller: busNameController,
+                    maxLength: 2,
+                    controller: yearsExpertiesController,
                     obscureText: false,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Business name',
-                      hintText: 'Type your business name',
+                      labelText: 'years of experience',
+                      hintText: 'Type your years of experience',
                     ),
                   ),
                 ),
                 Padding(padding: EdgeInsets.fromLTRB(5,2,5,2),
                   child: TextField(
                     maxLines: 1,
-                    maxLength: 100,
-                    controller: busNameController,
+                    maxLength: 300,
+                    controller: addressController,
                     obscureText: false,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Business name',
-                      hintText: 'Type your business name',
+                      labelText: 'Business address',
+                      hintText: 'Type your business address',
                     ),
                   ),
                 ),
-                Padding(padding: EdgeInsets.fromLTRB(5,5,5,5),
+                Padding(padding: EdgeInsets.fromLTRB(5,2,5,2),
                   child: TextField(
-                  maxLines: 10,
-                  maxLength: 2000,
-                  controller: textController,
-                  obscureText: false,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Explain your request',
-                    hintText: 'Type your words',
+                    maxLines: 1,
+                    maxLength: 300,
+                    controller: mobileController,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'mobile',
+                      hintText: 'Type your mobile number',
+                    ),
                   ),
                 ),
+                Padding(padding: EdgeInsets.fromLTRB(5,2,5,2),
+                  child: TextField(
+                    maxLines: 1,
+                    maxLength: 300,
+                    controller: addressController,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Business phone',
+                      hintText: 'Type your business phone',
+                    ),
+                  ),
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: <Widget>[
-                //     Spacer(),
-                //     Radio(
-                //       value: 0,
-                //       groupValue: selectedRadio,
-                //       toggleable: true,
-                //       activeColor: Colors.green,
-                //       onChanged: (val) {
-                //         print("Radio $val");
-                //         setSelectedRadio(val);
-                //       },
-                //     ),
-                //     Text(
-                //       'Current Location',
-                //       style: TextStyle(fontSize: 9.0),
-                //     ),
-                //     Spacer(),
-                //     Radio(
-                //       value: 1,
-                //       groupValue: selectedRadio,
-                //       toggleable: true,
-                //       activeColor: Colors.green,
-                //       onChanged: (val) {
-                //         print("Radio $val");
-                //         setSelectedRadio(val);
-                //       },
-                //     ),
-                //     Text(
-                //       'Pick address from map',
-                //       style: TextStyle(fontSize: 9.0,
-                //       ),
-                //     ),
-                //     Spacer(),
-                //   ],
-                // ),
-                Padding(padding: EdgeInsets.fromLTRB(5,5,5,5),
+
+                 Padding(padding: EdgeInsets.fromLTRB(5,15,5,5),
                   child:
       Row(
           mainAxisAlignment: MainAxisAlignment.center,

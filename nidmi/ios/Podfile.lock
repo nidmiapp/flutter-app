@@ -10,7 +10,7 @@ PODS:
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
-  - geolocator (6.1.9):
+  - geolocator (6.2.0):
     - Flutter
   - multi_image_picker (4.7.14):
     - BSImagePicker (~> 2.10.3)
@@ -60,7 +60,7 @@ SPEC CHECKSUMS:
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
-  geolocator: 057a0c63a43e9c5296d8ad845a3ac8e6df23d899
+  geolocator: f5e3de65e241caba7ce3e8a618803387bda73384
   multi_image_picker: c068931d08240565e0615fb01437d16984909183
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
